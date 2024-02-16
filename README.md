@@ -1,6 +1,6 @@
 "# 2024-MySocialConnect-NgWebApiEF" 
 
-Social networking app utilizing .Net 8, Angular 17, Entity Framework, NoSQL
+Social networking app utilizing .Net 8, Angular 16, Entity Framework, NoSQL
 
 Projects
 ------------------------------------------------------
