@@ -1,0 +1,13 @@
+CTRL+K U Ctrl+K W => close all window
+CTRL+K S to save all
+CTRL+/ to comment the line
+Shift+Alt A to comment a block
+CTRL+SHIFT P show all commands
+F5 Debug
+CTRL+F5 start without debugging
+CTRL+` to toggle the terminal
+
+
+
+CTRL+. to bring up the context menu on squigly lines 
+

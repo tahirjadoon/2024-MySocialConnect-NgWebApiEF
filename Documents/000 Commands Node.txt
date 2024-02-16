@@ -1,0 +1,29 @@
+Install NVM
+•	https://github.com/coreybutler/nvm-windows#readme
+•	https://www.freecodecamp.org/news/node-version-manager-nvm-install-guide/ 
+
+> nvm -v 
+
+
+Installing node 
+> nvm install latest
+> nvm install v.y.y
+Install latest LTS version of node (Long Term Support)
+> nvm install --lts
+Install latest stable version of node
+> nvm install stable
+
+Check installed node versions
+> nvm ls
+
+Switch version of node
+> nvm use 18.17.0
+
+List remove available versions of node
+> nvm ls-remote
+
+Set default version of node
+> nvm alias default 18.17.0
+
+Node check version
+node -v || node --version

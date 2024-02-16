@@ -1,0 +1,59 @@
+>cls => to clear the screen
+
+>dotnet --version
+>dotnet --info
+>dotnet -h   => see the commands
+>dotnet new list
+>dotnet new -h  => contextual help
+>dotnet new webapi -h  => contextual help
+
+Terminal>dotnet run will run the project
+Terminal>dotnet watch run will re-run after save 
+CTRL+C to shutdown
+
+Adding c# related extensions in VS Code
+
+1.	C# Dev Kit Microsoft – this will also install
+	a.	.NET Install Tool – Microsoft
+	b.	C# base language support – Microsoft 
+	c.	IntekkiCode for C# Dev Kit
+2.	Material Icon Theme Philip Kief
+
+
+Making VS Code IDE Better
+1.	AutoSave: Go to File and select “AutoSave” to automatically save our changes
+2.	Go to File > Preferences > Settings
+	a.	Type Font and change 
+		i.	Main font size
+		ii.	Scroll down and change for Console and Terminal as well
+	b.	Type exclude and add following to hide BIN and OBJ folders
+		i.	**/bin
+		ii.	**/obj
+c.	Type folders, go to Explorer:Compat Folder and unselect
+
+Create WebAPI Method 1
+	>dotnet new sln
+		Solution name the same as the container folder
+	>dotnet new webapi -o MSC.WebApi
+		Create a new project with name MSC.WebApi 
+	>dotnet sln add MSC.WebApi
+		Add the project to the solution
+Create WebAPI Method 2
+	>dotnet new webapi -o MSC.WebApi -n MSC.WebApi
+
+Tidy up the Solution
+File > Preference > Settings and then type “Exclude”
+	Exclude Bin and obj folder by following the examples
+	
+Commands
+	•	Dotnet build
+	•	dotnet run
+	•	dotnet watch run
+	•	dotnet clean
+	•	dotnet build --no-incremental [rebuild]
+	•	dotnet new gitignore 
+
+Run and Debug
+	Press CTRL+SHIFT+D 
+	Click create a launch.json file
+	Select Net5+ and Net Core

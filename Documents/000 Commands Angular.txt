@@ -1,0 +1,11 @@
+Commands
+Create the Anuglar app 
+>ng new MySocialConnect-SPA	
+>ng serve to run
+
+> ng g c value -- skip-tests [component]
+> ng g c site/nav --skip-tests [component]
+> ng g s core/services/account --skip-tests [service]
+> ng g interface Employee --type=model [interface]
+> ng g class EmployeeClass --type=model [class]
+> ng g interceptor error --skip-tests [interceptor]
