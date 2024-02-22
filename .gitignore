@@ -25,6 +25,11 @@
 #appsettings.json
 
 ########################
+# SQLITE DB #
+########################
+MySocialConnect.db
+
+########################
 # Visual Studio DotNet #
 ########################
 

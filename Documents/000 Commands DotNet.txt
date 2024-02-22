@@ -49,11 +49,45 @@ Commands
 	•	Dotnet build
 	•	dotnet run
 	•	dotnet watch run
+	•	dotnet watch --no-hot-reload
 	•	dotnet clean
 	•	dotnet build --no-incremental [rebuild]
 	•	dotnet new gitignore 
+	
+dotnet EF commands 
+	dotnet ef migrations add
+	dotnet ef migrations list
+	dotnet ef migrations script
+	dotnet ef dbcontext info
+	dotnet ef dbcontext scaffold
+	dotnet ef database drop
+	dotnet ef database update
+	
+	dotnet ef migrations -h
+	•	add
+	•	bundle
+	•	list
+	•	remove
+	•	script
+
+	>dotnet ef database
+	  drop    Drops the database.
+	  update  Updates the database to a specified migration.
+	  
+	>dotnet ef migrations add InitialCreate -o DbFile/Migrations
+	>dotnet ef migrations remove
+	>dotnet ef database update
+	
+	Completely remove all migrations and start all over again
+	•	dotnet ef database update 0
+	•	dotnet ef migrations remove
+
+	Drop database and recreate
+	•	dotnet ef database drop
+	•	dotnet ef database update
 
 Run and Debug
 	Press CTRL+SHIFT+D 
-	Click create a launch.json file
+	.Net: Generate Assets for Build and debug
+		this will create a launch.json
 	Select Net5+ and Net Core
