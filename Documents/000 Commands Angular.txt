@@ -9,3 +9,4 @@ Create the Anuglar app
 > ng g interface Employee --type=model [interface]
 > ng g class EmployeeClass --type=model [class]
 > ng g interceptor error --skip-tests [interceptor]
+> ng generate environments

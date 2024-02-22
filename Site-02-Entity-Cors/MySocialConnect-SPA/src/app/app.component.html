@@ -1,1 +1,29 @@
-<h1><span>{{ title }}</span></h1>
+<h1 class="title">{{ title }}</h1>
+
+<hr>
+<h2>Users Preferred</h2>
+<div *ngIf="errorPreferred !== ''">
+    Error:{{errorPreferred}}
+</div>
+<div *ngIf="errorPreferred === ''">
+    <ul>
+        <li *ngFor='let user of usersPreferred'>
+            {{user.id}} - {{ user.guid }} - {{user.userName}}
+        </li>
+    </ul>
+    Complete: {{completePreferred}}
+</div>
+
+<hr>
+<h2>Users Non Preferred</h2>
+<div *ngIf="errorNonPreferred !== ''">
+    Error:{{errorNonPreferred}}
+</div>
+<div *ngIf="errorNonPreferred === ''">
+    <ul>
+        <li *ngFor='let user2 of usersNonPreferred'>
+            {{user2.id}} - {{ user2.guid }} - {{user2.userName}}
+        </li>
+    </ul>
+    Complete: {{completeNonPreferred}}
+</div>

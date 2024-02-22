@@ -56,7 +56,7 @@ app.UseHttpsRedirection();
 
 /***Custom Section Start***/
 //ordering is important here. UseCors before UseAuthentication and UseAuthentication before UseAuthorization
-app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().WithOrigins("https://localhost:4200/", "http://localhost:4200/"));
+app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().WithOrigins("https://localhost:4200", "http://localhost:4200"));
 
 /***Custom Section End***/
 
