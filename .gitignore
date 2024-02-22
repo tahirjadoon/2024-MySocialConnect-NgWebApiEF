@@ -28,6 +28,8 @@
 # SQLITE DB #
 ########################
 MySocialConnect.db
+MySocialConnect.db-shm
+MySocialConnect.db-wal
 
 ########################
 # Visual Studio DotNet #
