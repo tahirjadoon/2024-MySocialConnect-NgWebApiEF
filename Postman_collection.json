@@ -1,0 +1,383 @@
+{
+	"info": {
+		"_postman_id": "eee0e07f-a4b9-4b6e-876b-0c681b29a18e",
+		"name": "2024-Angular-Api-EF-MySocialConnect",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "33004813"
+	},
+	"item": [
+		{
+			"name": "Site-03",
+			"item": [
+				{
+					"name": "register",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"username\": \"Marianasmit\",\r\n\t\"password\": \"Password@1\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url_2024_msc}}/api/account/register",
+							"host": [
+								"{{url_2024_msc}}"
+							],
+							"path": [
+								"api",
+								"account",
+								"register"
+							],
+							"query": [
+								{
+									"key": "username",
+									"value": "jane",
+									"disabled": true
+								},
+								{
+									"key": "password",
+									"value": "password$1",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"username\": \"Marianasmit\",\r\n\t\"password\": \"Password@1\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url_2024_msc}}/api/account/login",
+							"host": [
+								"{{url_2024_msc}}"
+							],
+							"path": [
+								"api",
+								"account",
+								"login"
+							],
+							"query": [
+								{
+									"key": "username",
+									"value": "jane",
+									"disabled": true
+								},
+								{
+									"key": "password",
+									"value": "password$1",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "users all",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url_2024_msc}}/api/users",
+							"host": [
+								"{{url_2024_msc}}"
+							],
+							"path": [
+								"api",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "user by id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url_2024_msc}}/api/users/5",
+							"host": [
+								"{{url_2024_msc}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"5"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "user by name",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url_2024_msc}}/api/users/Jane/name",
+							"host": [
+								"{{url_2024_msc}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"Jane",
+								"name"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "user by guid",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url_2024_msc}}/api/users/7E99E2CA-2930-4DE7-8479-E54BF5911CF8/guid",
+							"host": [
+								"{{url_2024_msc}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"7E99E2CA-2930-4DE7-8479-E54BF5911CF8",
+								"guid"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "login with save token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const user = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Has properties\", function () {\r",
+									"    pm.expect(user).to.have.property('userName');\r",
+									"    pm.expect(user).to.have.property('token');\r",
+									"    pm.expect(user).to.have.property('guid');\r",
+									"});\r",
+									"\r",
+									"if (pm.test(\"Has properties\")) {\r",
+									"    //pm.globals.set('token', user.token);\r",
+									"    //pm.globals.set('userName', user.userName);\r",
+									"    //pm.globals.set('guid', user.guid);\r",
+									"\r",
+									"    pm.collectionVariables.set('token_2024_msc', user.token) \r",
+									"    pm.collectionVariables.set('userName_2024_msc', user.userName) \r",
+									"    pm.collectionVariables.set('guid_2024_msc', user.guid) \r",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"username\": \"Marianasmit\",\r\n\t\"password\": \"Password@1\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url_2024_msc}}/api/account/login",
+							"host": [
+								"{{url_2024_msc}}"
+							],
+							"path": [
+								"api",
+								"account",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login users all",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token_2024_msc}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url_2024_msc}}/api/users",
+							"host": [
+								"{{url_2024_msc}}"
+							],
+							"path": [
+								"api",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login user by id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token_2024_msc}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url_2024_msc}}/api/users/5",
+							"host": [
+								"{{url_2024_msc}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"5"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login user by name",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token_2024_msc}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url_2024_msc}}/api/users/Jane/name",
+							"host": [
+								"{{url_2024_msc}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"Jane",
+								"name"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login user by guid",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token_2024_msc}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url_2024_msc}}/api/users/7E99E2CA-2930-4DE7-8479-E54BF5911CF8/guid",
+							"host": [
+								"{{url_2024_msc}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"7E99E2CA-2930-4DE7-8479-E54BF5911CF8",
+								"guid"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "url_2024_msc",
+			"value": "https://localhost:5001",
+			"type": "string"
+		},
+		{
+			"key": "token_2024_msc",
+			"value": ""
+		},
+		{
+			"key": "userName_2024_msc",
+			"value": ""
+		},
+		{
+			"key": "guid_2024_msc",
+			"value": ""
+		}
+	]
+}

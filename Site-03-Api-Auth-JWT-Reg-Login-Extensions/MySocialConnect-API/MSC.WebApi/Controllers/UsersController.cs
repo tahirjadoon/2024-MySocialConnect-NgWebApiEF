@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MSC.Core.BusinessLogic;
 using MSC.Core.DB.Entities;
@@ -9,6 +10,7 @@ using MSC.Core.DB.Entities;
 namespace MSC.WebApi.Controller;
 
 // /api/users
+[Authorize]
 public class UsersController : BaseApiController
 {
     private readonly IUserBusinessLogic _userBusinessLogic;

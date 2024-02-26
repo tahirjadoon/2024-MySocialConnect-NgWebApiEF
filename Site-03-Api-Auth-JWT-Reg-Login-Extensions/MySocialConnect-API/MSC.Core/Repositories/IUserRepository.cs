@@ -9,9 +9,17 @@ public interface IUserRepository
 {
     Task<IEnumerable<AppUser>> GetUsersAsync();
 
+    Task<AppUser> GetUserRawAsync(string userName);
+
     Task<AppUser> GetUserAsync(int id);
 
     Task<AppUser> GetUserAsync(string userName);
 
     Task<AppUser> GetUserAsync(Guid guid);
+
+    Task<bool> UserExists(string userName);
+
+    Task<bool> RegisterUserAsync(AppUser user);
+
+    Task<bool> SaveAllAsync();
 }
