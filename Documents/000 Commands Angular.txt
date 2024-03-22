@@ -3,6 +3,8 @@ Create the Anuglar app
 >ng new MySocialConnect-SPA	
 >ng serve to run
 
+Use --dry-run to do a test run and see what is getting added and where
+
 > ng g c value --skip-tests [component]
 > ng g c site/nav --skip-tests [component]
 > ng g s core/services/account --skip-tests [service]
@@ -34,3 +36,7 @@ Commands:
   ng g service [name]           Creates a new, generic service definition in the given project.                                               [aliases: s]
   ng g service-worker           Pass this schematic to the "run" command to create a service worker
   ng g web-worker [name]        Creates a new, generic web worker definition in the given project.
+  
+--------------------------------
+
+@ViewChild: to work with the element inside the html from component  

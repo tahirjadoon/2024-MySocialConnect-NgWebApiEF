@@ -16,6 +16,13 @@ public class AccountController : BaseApiController
         _userBusinessLogic = userBusinessLogic;
     }
 
+    [HttpGet("checkUser/{userName}")] // /api/account/checkUser/name
+    public async Task<ActionResult<bool>> CheckUserName(string userName)
+    {
+        var userExists = await _userBusinessLogic.UserExists(userName);
+        return Ok(userExists);
+    }
+
     [HttpPost("register")]
     public async Task<ActionResult<LoggedInUserDto>> Register([FromBody] UserRegisterDto registerUser)
     {

@@ -339,6 +339,31 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "Site-04",
+			"item": [
+				{
+					"name": "checkUser",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url_2024_msc}}/api/account/checkUser/janesmit",
+							"host": [
+								"{{url_2024_msc}}"
+							],
+							"path": [
+								"api",
+								"account",
+								"checkUser",
+								"janesmit"
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		}
 	],
 	"event": [

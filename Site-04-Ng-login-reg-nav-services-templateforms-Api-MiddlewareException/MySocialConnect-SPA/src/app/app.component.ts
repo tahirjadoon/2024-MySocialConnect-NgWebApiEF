@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { HelperService } from './core/services/helper.service';
+import { AccountService } from './core/services/account.service';
 
 
 @Component({
@@ -10,6 +11,7 @@ import { HelperService } from './core/services/helper.service';
 })
 export class AppComponent implements OnInit {
   title = '';
+  webApiUrl = '';
 
   usersPreferred: any;
   errorPreferred: string = "";
@@ -19,13 +21,15 @@ export class AppComponent implements OnInit {
   errorNonPreferred: string = "";
   completeNonPreferred: string = "";
 
-  constructor(private helperService: HelperService, private http: HttpClient){}
+  constructor(private helperService: HelperService, private http: HttpClient, private accountService: AccountService){}
 
   ngOnInit(): void {
     this.title = this.helperService.Title;
+    this.webApiUrl = this.helperService.BaseUrlServer;
+    //this.getUsersPreferred();
+    //this.getUsersNonPreferred();
 
-    this.getUsersPreferred();
-    this.getUsersNonPreferred();
+    this.getAndSetLoggedInUser();
   }
 
   getUsersPreferred(){
@@ -51,5 +55,9 @@ export class AppComponent implements OnInit {
         this.completeNonPreferred = "Users Non Preferred Complete";
       }
     );
+  }
+
+  getAndSetLoggedInUser(){
+    this.accountService.getAndFireCurrentUser();
   }
 }

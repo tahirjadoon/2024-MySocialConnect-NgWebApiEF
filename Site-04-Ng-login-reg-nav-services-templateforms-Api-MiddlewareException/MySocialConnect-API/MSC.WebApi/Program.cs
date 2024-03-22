@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MSC.Core.Extensions;
+using MSC.Core.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,9 +32,9 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-/***Custom Section Start***/
-
-/***Custom Section End***/
+/***Custom Section Middleware Start***/
+app.UseMiddleware<ExceptionMiddleware>();
+/***Custom Section Middleware End***/
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

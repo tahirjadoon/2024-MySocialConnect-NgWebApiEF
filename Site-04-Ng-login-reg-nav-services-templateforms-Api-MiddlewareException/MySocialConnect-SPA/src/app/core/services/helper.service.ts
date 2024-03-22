@@ -24,8 +24,21 @@ export class HelperService {
   public IsLogConsole: boolean = this.isLogConsole;
 
   public logIf(text: any){
-    if(this.isLogConsole)
-      console.log(text);
+    if(!this.isLogConsole) return;
+    console.log(text);
+  }
+
+  public logIfFrom(msg: any, from: string){
+    if(!this.isLogConsole) return;
+    if(from) this.logIf(`***${from}***`)
+    if(msg) this.logIf(msg);
+  }
+
+  public logIfError(error: any, from: string){
+    if(!this.isLogConsole) return;
+    this.logIf("***displayError***")
+    if(from) this.logIf(from);
+    if(error) this.logIf(error);
   }
 
   public replaceKeyValue(text: string, key: string, value: any, printtext: string = ""): string{
@@ -36,8 +49,8 @@ export class HelperService {
     return newText;
   }
 
-  //public BaseUrlServer: string = this.baseUrlServer;
-  //public BaseUrlApi: string = this.baseUrlApi;
+  public BaseUrlServer: string = this.baseUrlServer;
+  public BaseUrlApi: string = this.baseUrlApi;
 
   //keys
   public keyId = "[id]";
@@ -60,6 +73,7 @@ export class HelperService {
   private urlAccount: string = `${this.baseUrlApi}/account`;
   public urlAccountRegister: string = `${this.urlAccount}/register`;
   public urlAccountLogin: string = `${this.urlAccount}/login`;
+  public urlAccountCheckUser: string = `${this.urlAccount}/checkUser/${this.keyName}`;
 
   //buggy controller urls
   private urlBuggy = `${this.baseUrlApi}/buggy`;
