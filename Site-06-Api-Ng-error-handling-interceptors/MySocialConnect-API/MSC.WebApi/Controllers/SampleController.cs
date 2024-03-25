@@ -1,7 +1,9 @@
 ﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
+using MSC.Core.BusinessLogic;
 using MSC.Core.Dtos.Helper;
 using MSC.Core.Extensions;
 
@@ -12,11 +14,13 @@ public class SampleController : BaseApiController
 {
     private readonly IOptions<EnvConfig> _envConfig;
     private readonly IConfiguration _config;
+    private readonly IUserBusinessLogic _userBal;
 
-    public SampleController(IOptions<EnvConfig> envConfig, IConfiguration config)
+    public SampleController(IOptions<EnvConfig> envConfig, IConfiguration config, IUserBusinessLogic userBal)
     {
         _envConfig = envConfig;
         _config = config;
+        _userBal = userBal;
     }
 
     [HttpPost("sample1")]
@@ -39,4 +43,6 @@ public class SampleController : BaseApiController
         var howdy = _envConfig;
         return Ok(true);
     }
+
+
 }
