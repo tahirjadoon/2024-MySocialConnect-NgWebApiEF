@@ -1,6 +1,8 @@
 import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
 import { Subscription } from 'rxjs';
 
+import { ToastrService } from 'ngx-toastr';
+
 import { HelperService } from '../../core/services/helper.service';
 import { AccountService } from 'src/app/core/services/account.service';
 
@@ -20,7 +22,8 @@ export class RegisterComponent implements OnInit, OnDestroy {
 
   registerSubscription!: Subscription 
 
-  constructor(private helperService: HelperService, private accountService: AccountService){}
+  constructor(private helperService: HelperService, private accountService: AccountService, 
+    private toastr: ToastrService){}
   
   ngOnInit(): void {
     
@@ -44,6 +47,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
       },
       error: e => {
         this.helperService.logIfError(e, "register error template driven");
+        this.toastr.error(e.error);
       },
       complete: () => {
         this.helperService.logIfFrom("register complete", "register template driven");

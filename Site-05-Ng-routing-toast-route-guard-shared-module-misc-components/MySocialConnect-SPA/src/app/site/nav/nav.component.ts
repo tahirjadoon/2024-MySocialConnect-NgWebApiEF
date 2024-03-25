@@ -1,11 +1,15 @@
 import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Subscription } from 'rxjs';
+import { ActivatedRoute, ParamMap, Router } from '@angular/router';
+
+import { ToastrService } from 'ngx-toastr';
 
 import { HelperService } from '../../core/services/helper.service';
 import { AccountService } from '../../core/services/account.service';
 
 import { LoginDto } from '../../core/models-interfaces/login-dto.model';
 import { LoggedInUserDto } from '../../core/models-interfaces/logged-in-user-dto.model';
+
 
 @Component({
   selector: 'app-nav',
@@ -22,12 +26,17 @@ export class NavComponent implements OnInit, AfterViewInit, OnDestroy {
   isLoggedIn: boolean = false;
   loggedInUser: LoggedInUserDto | null = <LoggedInUserDto>{};
   loginDto: LoginDto = <LoginDto>{};
+  returnUrl: string = "";
 
   //subscriptions
   loginSubscription!: Subscription;
   loggedInUserSubscription!: Subscription;
+  queryParamsubscription!: Subscription;
 
-  constructor(private helperService: HelperService, private accountService: AccountService) { }
+  constructor(private helperService: HelperService, private accountService: AccountService, 
+            private router: Router, 
+            private toastr: ToastrService, 
+            private activatedRoute: ActivatedRoute) { }
   
   ngAfterViewInit(): void {
     this.putFocus = true;
@@ -37,11 +46,26 @@ export class NavComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnInit(): void {
     this.title = this.helperService.Title;
     this.getCurrentLoggedInUser(); //persisted user in local storage
+
+    //fill return url if avaialble 
+    //method #1
+    //const returnUrl1 = this.activatedRoute.snapshot.queryParamMap.get('returnUrl');
+    //if(returnUrl1) 
+    //  this.returnUrl = returnUrl1;
+    //method #2
+    this.queryParamsubscription = this.activatedRoute.queryParamMap.subscribe({
+      next: (params: ParamMap) => {
+        const returnUrl = params.get("returnUrl");
+        if(returnUrl) 
+          this.returnUrl = returnUrl;
+      }
+    });
   }
 
   ngOnDestroy(): void {
     if(this.loginSubscription) this.loginSubscription.unsubscribe();
     if(this.loggedInUserSubscription) this.loggedInUserSubscription.unsubscribe();
+    if(this.queryParamsubscription) this.queryParamsubscription.unsubscribe();
   }
 
   private focusUserName(){
@@ -70,9 +94,16 @@ export class NavComponent implements OnInit, AfterViewInit, OnDestroy {
   onLogin(){
     this.helperService.logIfFrom(this.loginDto, 'Login')
 
+    if(!this.loginDto || !this.loginDto.userName || !this.loginDto.password){
+      this.focusUserName();
+      this.toastr.error('Login info missing');
+      return;
+    }
+
     //set executing login true
     this.isExecutingLogin = true;
 
+    //instead of r can also use () or _
     this.loginSubscription = this.accountService.login(this.loginDto).subscribe({
       next: r => {
         this.helperService.logIfFrom(r, 'Login.User Response');
@@ -80,9 +111,15 @@ export class NavComponent implements OnInit, AfterViewInit, OnDestroy {
         this.loginDto = <LoginDto>{};
         //this.isLoggedIn = true;
         //this.loggedInUser = r;
+
+        //route to members
+        const returnUrl = this.returnUrl ? this.returnUrl : '/members';
+        this.router.navigateByUrl(returnUrl);
+
       }, error: e => {
         this.helperService.logIfError(e, 'NavComponent.OnLogin');
         this.focusUserName();
+        this.toastr.error(e.error);
       }, complete: () => {
         //set executing login false
         this.isExecutingLogin = false;
@@ -96,6 +133,8 @@ export class NavComponent implements OnInit, AfterViewInit, OnDestroy {
     this.accountService.logout();
     setTimeout(() => {
       this.focusUserName();
+      this.returnUrl = "";
+      this.router.navigateByUrl("/");
     }, 500);
   }
 }

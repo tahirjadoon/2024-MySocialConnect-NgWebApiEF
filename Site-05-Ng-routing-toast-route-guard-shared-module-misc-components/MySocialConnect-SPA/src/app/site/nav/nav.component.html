@@ -1,6 +1,6 @@
-<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-primary"> <!-- bg-dark-->
     <div class="container"> <!--container-fluid to container-->
-      <a class="navbar-brand" href="#"><span class="title">{{ title }}</span></a>
+      <a class="navbar-brand" routerLink="/" routerLinkActive="active"><span class="title">{{ title }}</span></a>
       <!--removing the navbar toggler, this is for responsive design-->
       <!--
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
@@ -10,10 +10,12 @@
       <!--<div class="collapse navbar-collapse" id="navbarCollapse">-->
         
         <!--logged in links section-->
-        <ul class="navbar-nav me-auto mb-2 mb-md-0" *ngIf="isLoggedIn">
-          <li class="nav-item"><a class="nav-link" href="#">Matches</a></li>
-          <li class="nav-item"><a class="nav-link" href="#">Lists</a></li>
-          <li class="nav-item"><a class="nav-link" href="#">Messages</a></li>
+        <ul class="navbar-nav me-auto mb-2 mb-md-0">
+          <ng-container *ngIf="isLoggedIn">
+            <li class="nav-item"><a class="nav-link" routerLink="/members" routerLinkActive="active">Members </a></li>
+            <li class="nav-item"><a class="nav-link" routerLink="/lists" routerLinkActive="active">Lists</a></li>
+            <li class="nav-item"><a class="nav-link" routerLink="/messages" routerLinkActive="active">Messages</a></li>
+          </ng-container>
         </ul>
 
         <!--logged in dropped down section-->
@@ -22,7 +24,7 @@
             Welcome {{loggedInUser?.userName | titlecase}}
           </a>
           <div class="dropdown-menu" *dropdownMenu>
-            <a class="dropdown-item">Edit Profile</a>
+            <a class="dropdown-item" routerLink="members/edit">Edit Profile</a>
             <a class="dropdown-item" (click)="onLogout()">Logout</a>
           </div>
         </div>
@@ -35,7 +37,7 @@
           <input name="password" id="password" #password [(ngModel)]="loginDto.password"
             class="form-control me-2" type="password" placeholder="Password" aria-label="Password">
 
-          <button class="btn btn-outline-info" type="submit">Login</button>
+          <button class="btn btn-success" type="submit">Login</button>
         </form>
       <!--</div>-->
     </div>
