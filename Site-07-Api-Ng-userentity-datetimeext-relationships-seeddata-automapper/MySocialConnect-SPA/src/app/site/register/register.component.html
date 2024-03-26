@@ -1,0 +1,49 @@
+<div>
+    <form #registerForm="ngForm" (ngSubmit)="onRegister()" autocomplete="off" [appMustMatch]="['password','confirmpassword']">
+        <h2 class="text-center text-primary">Sign up</h2>
+        <hr>
+        <div class="form-group mb-3">
+            <input type="text" class="form-control" 
+            name="username" id="username" placeholder="Username" 
+            [(ngModel)]="register.userName" #username="ngModel" required minlength="5" appUserNameAllowed appUserNameCheck>
+
+            <div *ngIf="username.touched && username.invalid && username.errors?.['required']" 
+                class="alert alert-danger">User name is required</div>
+            <div *ngIf="username.touched && username.invalid && username.errors?.['minlength']" 
+                class="alert alert-danger">User name must be minimum 5 characters</div>
+            <div *ngIf="username.touched && username.invalid && username.errors?.['userNameAllowed'] && !username.errors?.['minlength']"
+                class="alert alert-danger">Alpha numeric with _ and - are allowed. Number cannot be at start and  _ - should be in the middle</div>
+
+            <div *ngIf="username.touched && username.invalid && username.errors?.['userNameNotAvailable'] && !username.errors?.['required'] && !username.errors?.['minlength'] && !username.errors?.['userNameAllowed']"
+                class="alert alert-danger">The user name is already taken</div>
+        </div>
+        <div class="form-group mb-3">
+            <input type="password" class="form-control" 
+            name="password" id="password" placeholder="Password"
+            [(ngModel)]="register.password" #password="ngModel" required minlength="10" appPasswordStrength>
+            <div *ngIf="password.touched && password.invalid && password.errors?.['required']" 
+            class="alert alert-danger">Password is required</div>
+            <div *ngIf="password.touched && password.invalid && password.errors?.['minlength']" 
+            class="alert alert-danger">Password must be minimum 10 characters</div>
+            <div *ngIf="password.touched && password.invalid && password.errors?.['passwordStrength'] && !password.errors?.['minlength']" 
+            class="alert alert-danger">Password must have an upper case, lower case, special character, a number and max length 30</div>
+        </div>
+        <div class="form-group mb-3">
+            <input type="password" class="form-control" 
+            name="confirmpassword" id="confirmpassword" placeholder="Confirm password"
+            [(ngModel)]="register.confirmPassword" #confirmpassword="ngModel" required >
+            <div *ngIf="confirmpassword.touched && confirmpassword.invalid && password.errors?.['required']" 
+            class="alert alert-danger">Confirm password is required</div>
+            <div *ngIf="confirmpassword.touched && confirmpassword.invalid && !password.errors?.['required'] && !confirmpassword.errors?.['required'] && confirmpassword.errors?.['mustMatch'] " 
+            class="alert alert-danger">Passwords do not match</div>
+            <!--
+            <div *ngIf="confirmpassword.touched && !confirmpassword.errors?.['required'] && confirmpassword.value !== password.value" 
+            class="alert alert-danger">Password do not match</div>
+            -->
+        </div>
+        <div class="text-center">
+            <button class="btn btn-success me-2" type="submit" [disabled]="registerForm.invalid">Register</button>
+            <button class="btn btn-danger" type="button" (click)="onCancel()">Cancel</button>
+        </div>
+    </form>
+</div>
