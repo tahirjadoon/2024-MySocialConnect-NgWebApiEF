@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
 
 import { SharedModule } from './core/modules/shared.module';
 
@@ -8,6 +9,9 @@ import { NavComponent } from './site/nav/nav.component';
 
 import { NotFoundComponent } from './site/errors/not-found/not-found.component';
 import { ServerErrorComponent } from './site/errors/server-error/server-error.component';
+
+import { ErrorInterceptor } from './core/interceptors/error.interceptor';
+
 
 
 @NgModule({
@@ -21,7 +25,9 @@ import { ServerErrorComponent } from './site/errors/server-error/server-error.co
     BrowserModule,
     SharedModule,
   ],
-  providers: [],
+  providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -17,7 +17,7 @@ public class UserRegisterDto
     .{8,}: Ensures a minimum length of 8 characters (note used)
     */
     [Required(ErrorMessage = "Password is empty")]
-    [StringLength(16, MinimumLength = 4)]
+    [StringLength(16, MinimumLength = 10)]
     [RegularExpression("^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?\\d)(?=.*?[@#$&()<>]).+$", ErrorMessage = "Password must have an upper case, a lower case, a number and one special character from the set @#$&()<>")]
     public string Password { get; set; }
 }

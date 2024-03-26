@@ -5,8 +5,9 @@ Create the Anuglar app
 
 Use --dry-run to do a test run and see what is getting added and where
 
-> ng g c value --skip-tests [component]
+> ng g c value --skip-tests [component] [--dry-run]
 > ng g c site/nav --skip-tests [component]
+> ng g c errors/sample --module=core/modules/shared --skip-tests
 > ng g s core/services/account --skip-tests [service]
 > ng g interface Employee --type=model [interface]
 > ng g class EmployeeClass --type=model [class]

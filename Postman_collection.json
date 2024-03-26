@@ -364,6 +364,115 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "Site-06",
+			"item": [
+				{
+					"name": "auth",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url_2024_msc}}/api/sample/auth",
+							"host": [
+								"{{url_2024_msc}}"
+							],
+							"path": [
+								"api",
+								"sample",
+								"auth"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "usernotfound",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url_2024_msc}}/api/sample/usernotfound",
+							"host": [
+								"{{url_2024_msc}}"
+							],
+							"path": [
+								"api",
+								"sample",
+								"usernotfound"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "servererror",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url_2024_msc}}/api/sample/servererror",
+							"host": [
+								"{{url_2024_msc}}"
+							],
+							"path": [
+								"api",
+								"sample",
+								"servererror"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "badrequest",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url_2024_msc}}/api/sample/badrequest",
+							"host": [
+								"{{url_2024_msc}}"
+							],
+							"path": [
+								"api",
+								"sample",
+								"badrequest"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "samplelogin",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url_2024_msc}}/api/sample/samplelogin",
+							"host": [
+								"{{url_2024_msc}}"
+							],
+							"path": [
+								"api",
+								"sample",
+								"samplelogin"
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		}
 	],
 	"event": [

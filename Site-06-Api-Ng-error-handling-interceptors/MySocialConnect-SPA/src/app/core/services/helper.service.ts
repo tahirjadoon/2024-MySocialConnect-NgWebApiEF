@@ -75,10 +75,11 @@ export class HelperService {
   public urlAccountLogin: string = `${this.urlAccount}/login`;
   public urlAccountCheckUser: string = `${this.urlAccount}/checkUser/${this.keyName}`;
 
-  //buggy controller urls
-  private urlBuggy = `${this.baseUrlApi}/buggy`;
-  public urlBuggyAuth: string = `${this.urlBuggy}/auth`;
-  public urlBuggyNotFound: string = `${this.urlBuggy}/not-found`;
-  public urlBuggyServerError: string = `${this.urlBuggy}/server-error`;
-  public urlBuggyBadRequest: string = `${this.urlBuggy}/bad-request`;
+  //sampe controller urls for testing errors
+  private urlSample = `${this.baseUrlApi}/sample`;
+  public urlSampleAuth: string = `${this.urlSample}/auth`;
+  public urlSampleUserNotFound: string = `${this.urlSample}/usernotfound`;
+  public urlSampleServerError: string = `${this.urlSample}/servererror`;
+  public urlSampleBadRequest: string = `${this.urlSample}/badrequest`;
+  public urlSampleLogin: string = `${this.urlSample}/samplelogin`;
 }

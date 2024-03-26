@@ -5,6 +5,6 @@ import { Component } from '@angular/core';
   templateUrl: './display-fgerrors.component.html',
   styleUrls: ['./display-fgerrors.component.css']
 })
-export class DisplayFGErrorsComponent {
+export class DisplayFgerrorsComponent {
 
 }

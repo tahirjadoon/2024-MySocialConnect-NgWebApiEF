@@ -4,6 +4,9 @@ public class ExceptionResponseDto
 {
     public ExceptionResponseDto(int statusCode, string message = null, string details = null)
     {
+        StatusCode = statusCode;
+        Message = message;
+        Details = details;
     }
 
     public int StatusCode { get; set; }

@@ -119,7 +119,7 @@ export class NavComponent implements OnInit, AfterViewInit, OnDestroy {
       }, error: e => {
         this.helperService.logIfError(e, 'NavComponent.OnLogin');
         this.focusUserName();
-        this.toastr.error(e.error);
+        //this.toastr.error(e.error); removed after error interceptor
       }, complete: () => {
         //set executing login false
         this.isExecutingLogin = false;

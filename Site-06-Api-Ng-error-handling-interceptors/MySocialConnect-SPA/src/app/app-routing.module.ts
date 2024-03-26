@@ -7,9 +7,13 @@ import { MemberDetailComponent } from './site/members/member-detail/member-detai
 import { ListsComponent } from './site/lists/lists.component';
 import { MessagesComponent } from './site/messages/messages.component';
 import { MemberEditComponent } from './site/members/member-edit/member-edit.component';
+import { SampleComponent } from './site/errors/sample/sample.component';
+import { NotFoundComponent } from './site/errors/not-found/not-found.component';
+import { ServerErrorComponent } from './site/errors/server-error/server-error.component';
 import { NotLoggedInComponent } from './site/errors/not-logged-in/not-logged-in.component';
 
 import { authGuard } from './core/guards/auth.guard';
+
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -26,8 +30,11 @@ const routes: Routes = [
       { path: 'messages', component: MessagesComponent },
     ]
   },
+  { path: 'errors/sample', component: SampleComponent},
   { path: 'errors/notloggedin', component: NotLoggedInComponent },
-  { path: '**', component: HomeComponent, pathMatch: 'full' } //invalid route
+  { path: 'errors/notfound', component: NotFoundComponent },
+  { path: 'errors/servererror', component: ServerErrorComponent },
+  { path: '**', component: NotFoundComponent, pathMatch: 'full' } //invalid route
 ];
 
 @NgModule({

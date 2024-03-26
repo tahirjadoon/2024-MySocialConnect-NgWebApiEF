@@ -26,9 +26,10 @@ import { MemberCardComponent } from '../../site/members/member-card/member-card.
 import { MemberEditComponent } from '../../site/members/member-edit/member-edit.component';
 import { PhotoEditorComponent } from '../../site/members/photo-editor/photo-editor.component';
 import { NotLoggedInComponent } from '../../site/errors/not-logged-in/not-logged-in.component';
-import { DisplayFGErrorsComponent } from '../../errors/display-fgerrors/display-fgerrors.component';
 
 import { RegisterReactiveformComponent } from '../../site/register-reactiveform/register-reactiveform.component';
+import { SampleComponent } from '../../site/errors/sample/sample.component';
+import { DisplayFgerrorsComponent } from '../../site/errors/display-fgerrors/display-fgerrors.component';
 
 
 
@@ -50,7 +51,8 @@ import { RegisterReactiveformComponent } from '../../site/register-reactiveform/
     MemberEditComponent, 
     PhotoEditorComponent, 
     NotLoggedInComponent, 
-    DisplayFGErrorsComponent, 
+    DisplayFgerrorsComponent,
+    SampleComponent
   ],
   imports: [
     CommonModule,
