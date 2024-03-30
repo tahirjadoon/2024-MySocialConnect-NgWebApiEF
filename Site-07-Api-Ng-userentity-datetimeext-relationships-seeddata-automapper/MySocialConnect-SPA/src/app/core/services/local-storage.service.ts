@@ -29,6 +29,12 @@ export class LocalStorageService {
     return JSON.parse(item);
   }
 
+  getItemJson2<T>(key: string): T | null{
+    const item = this.getItem(key);
+    if(!item) return null;
+    return <T>JSON.parse(item);
+  }
+
   getUser(): LoggedInUserDto{
     return this.getItemJson(this._keyUser)
   }
@@ -61,6 +67,7 @@ export class LocalStorageService {
   }
 
   //helper items to get some of the common pieces
+  public getUserId: number = this.getUser()?.id;
   public getUserName: string = this.getUser()?.userName;
   public getUserToken: string = this.getUser()?.token;
   public getUserGuid: string = this.getUser()?.guid;

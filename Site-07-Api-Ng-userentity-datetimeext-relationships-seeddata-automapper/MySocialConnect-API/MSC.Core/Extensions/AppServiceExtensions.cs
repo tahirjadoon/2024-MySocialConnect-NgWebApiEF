@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -7,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using MSC.Core.BusinessLogic;
 using MSC.Core.DB.Data;
+using MSC.Core.Mappers;
 using MSC.Core.Repositories;
 using MSC.Core.Services;
 
@@ -36,6 +38,8 @@ public static class AppServiceExtensions
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IUserBusinessLogic, UserBusinessLogic>();
         services.AddScoped<ITokenService, TokenService>();
+        //services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies()); //when have single project/assembly
+        services.AddAutoMapper(typeof(AutoMapperProfiles).Assembly);
         return services;
     }
 

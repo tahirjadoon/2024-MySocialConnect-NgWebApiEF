@@ -9,5 +9,6 @@ public class DataContext : DbContext
     {
     }
 
-    public DbSet<AppUser> Users { get; set; }
+    //Photos will be pulled with the user so no need to put here. Check Photo entity for details
+    public DbSet<AppUser> Users { get; set; } 
 }

@@ -22,7 +22,7 @@
         <!--logged in dropped down section-->
         <div class="dropdown" *ngIf="isLoggedIn" dropdown>
           <a class="dropdown-toggle text-light text-decoration-none" dropdownToggle>
-            Welcome {{loggedInUser?.userName | titlecase}}
+            Welcome {{loggedInUser?.displayName | titlecase}}
           </a>
           <div class="dropdown-menu" *dropdownMenu>
             <a class="dropdown-item" routerLink="members/edit">Edit Profile</a>

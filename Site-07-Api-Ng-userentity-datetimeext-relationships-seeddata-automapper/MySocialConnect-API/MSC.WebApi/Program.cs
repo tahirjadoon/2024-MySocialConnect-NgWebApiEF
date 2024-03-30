@@ -1,7 +1,12 @@
+using System;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Microsoft.OpenApi.Models;
+using MSC.Core.DB.Data;
 using MSC.Core.Extensions;
 using MSC.Core.Middleware;
 
@@ -28,7 +33,35 @@ builder.Services.AddControllers();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+//for the authorize button in swagger. Above AddAuthenticationService extension method is must to have
+//builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(
+    c => {
+        c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo{
+            Title = "MysocialConnect",
+            Version = "v1"
+        });
+        c.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme(){
+            Name = "Authorization",
+            Type = Microsoft.OpenApi.Models.SecuritySchemeType.ApiKey,
+            Scheme = "Bearer",
+            BearerFormat = "JWT",
+            In = Microsoft.OpenApi.Models.ParameterLocation.Header, 
+            Description = "Example: \"Bearer 1safsfsdfdfd\"",
+        });
+        c.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement{
+            {
+                new OpenApiSecurityScheme{
+                    Reference = new OpenApiReference{
+                        Type = ReferenceType.SecurityScheme, 
+                        Id = "Bearer"
+                    }
+                },
+                new string[]{}
+            }
+        });
+    }
+);
 
 var app = builder.Build();
 
@@ -56,5 +89,21 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+/***Custom Section Seed Data Start***/
+using var scope = app.Services.CreateScope();
+var services = scope.ServiceProvider;
+try{
+    var context = services.GetRequiredService<DataContext>();
+    //Asynchronously applies any pending migrations for the context to the database. Will create the database if it does not already exist.
+    await context.Database.MigrateAsync();
+    await SeedData.SeedUsers(context);
+}
+catch(Exception ex)
+{
+    var logger = services.GetService<ILogger<Program>>();
+    logger.LogError(ex, "An error occured during seeding data");
+}
+/***Custom Section Seed Data End***/
 
 app.Run();

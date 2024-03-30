@@ -8,15 +8,23 @@ namespace MSC.Core.BusinessLogic;
 
 public interface IUserBusinessLogic
 {
-    Task<IEnumerable<AppUser>> GetUsersAsync();
+    Task<IEnumerable<UserDto>> GetUsersAsync();
+    //same as above "GetUsersAsync" but using auto mapper queryable extensions
+    Task<IEnumerable<UserDto>> GetUsersAMQEAsync();
 
     Task<AppUser> GetUserRawAsync(string userName);
 
-    Task<AppUser> GetUserAsync(int id);
+    Task<UserDto> GetUserAsync(int id);
+    //same as above "GetUserAsync" but using auto mapper queryable extensions
+    Task<UserDto> GetUserAMQEAsync(int id);
 
-    Task<AppUser> GetUserAsync(string userName);
+    Task<UserDto> GetUserAsync(string userName);
+    //same as above "GetUserAsync" but using auto mapper queryable extensions
+    Task<UserDto> GetUserAMQEAsync(string userName);
 
-    Task<AppUser> GetUserAsync(Guid guid);
+    Task<UserDto> GetUserAsync(Guid guid);
+    //same as above "GetUserAsync" but using auto mapper queryable extensions
+    Task<UserDto> GetUserAMQEAsync(Guid guid);
 
     Task<bool> UserExists(string userName);
 
