@@ -4,6 +4,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
+import { TabsModule } from 'ngx-bootstrap/tabs';
 import { ToastrModule } from 'ngx-toastr';
 
 //app routing module
@@ -44,7 +45,7 @@ import { DisplayFgerrorsComponent } from '../../site/errors/display-fgerrors/dis
     RegisterComponent, //template driven form
     RegisterReactiveformComponent, //reactive form
     MemberListComponent, 
-    MemberDetailComponent, 
+    //MemberDetailComponent, this is now a stand alone component so due ng-gallery which is stand alone
     ListsComponent, 
     MessagesComponent, 
     MemberCardComponent, 
@@ -62,6 +63,7 @@ import { DisplayFgerrorsComponent } from '../../site/errors/display-fgerrors/dis
     FormsModule, 
     ReactiveFormsModule, 
     BsDropdownModule.forRoot(),
+    TabsModule.forRoot(),
     ToastrModule.forRoot({ positionClass: 'toast-bottom-right'}),
   ],
   exports: [
@@ -71,6 +73,7 @@ import { DisplayFgerrorsComponent } from '../../site/errors/display-fgerrors/dis
     FormsModule, 
     ReactiveFormsModule, 
     BsDropdownModule,
+    TabsModule,
     ToastrModule,
   ]
 })

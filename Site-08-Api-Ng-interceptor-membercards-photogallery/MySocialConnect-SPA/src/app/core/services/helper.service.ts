@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { environment } from 'src/environments/environment.development';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -9,13 +9,13 @@ export class HelperService {
   private isProduction: boolean = environment.production;
   private isLogConsole: boolean = environment.displayConsoleLog;
   private baseUrlServer: string = environment.usebaseUrlHttps ? environment.webApiBaseUrlHttps : environment.webApiBaseUrlHttp;
-  private baseUrlApi: string = `${this.baseUrlServer}api`;
+  //private baseUrlApi: string = `${this.baseUrlServer}api`;
 
   constructor() { 
     if(this.isLogConsole){
       console.log(`HelperService isProduction: ${this.isProduction}`);
       console.log(`HelperService baseUrlServer: ${this.baseUrlServer}`);
-      console.log(`HelperService baseUrlApi: ${this.baseUrlApi}`);
+      //console.log(`HelperService baseUrlApi: ${this.baseUrlApi}`);
     }
   }
 
@@ -50,7 +50,7 @@ export class HelperService {
   }
 
   public BaseUrlServer: string = this.baseUrlServer;
-  public BaseUrlApi: string = this.baseUrlApi;
+  //public BaseUrlApi: string = this.baseUrlApi;
 
   //keys
   public keyId = "[id]";
@@ -59,7 +59,7 @@ export class HelperService {
   public keyPhotoId = "[photoId]";
 
   //users
-  private urlUsers: string = `${this.baseUrlApi}/users`;
+  private urlUsers: string = `${this.baseUrlServer}users`;
   public urlUsersAll: string = `${this.urlUsers}/`;
   public urlUserUpdate: string = `${this.urlUsers}/`;
   public urlUserGetById: string = `${this.urlUsers}/${this.keyId}/`;
@@ -70,13 +70,13 @@ export class HelperService {
   public urlUserPhotoDelete: string = `${this.urlUsers}/delete/${this.keyPhotoId}/photo`;
 
   //account
-  private urlAccount: string = `${this.baseUrlApi}/account`;
+  private urlAccount: string = `${this.baseUrlServer}account`;
   public urlAccountRegister: string = `${this.urlAccount}/register`;
   public urlAccountLogin: string = `${this.urlAccount}/login`;
   public urlAccountCheckUser: string = `${this.urlAccount}/checkUser/${this.keyName}`;
 
   //sampe controller urls for testing errors
-  private urlSample = `${this.baseUrlApi}/sample`;
+  private urlSample = `${this.baseUrlServer}sample`;
   public urlSampleAuth: string = `${this.urlSample}/auth`;
   public urlSampleUserNotFound: string = `${this.urlSample}/usernotfound`;
   public urlSampleServerError: string = `${this.urlSample}/servererror`;
