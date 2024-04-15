@@ -15,6 +15,7 @@ public class AutoMapperProfiles : Profile
         Map_Photo_To_PhotoDto();
         Map_AppUser_To_LoggedInUserDto();
         Map_UserRegisterDto_To_AppUser();
+        Map_MemberUpdateDto_To_AppUser();
     }
 
     #region Mappers start
@@ -49,6 +50,11 @@ public class AutoMapperProfiles : Profile
         CreateMap<UserRegisterDto, AppUser>()
         .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.UserName.ToLowerInvariant()))
         ;
+    }
+
+    private void Map_MemberUpdateDto_To_AppUser()
+    {
+        CreateMap<MemberUpdateDto, AppUser>();
     }
 
     #endregion Mappers end

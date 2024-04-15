@@ -1,5 +1,11 @@
 <div class="row">
+    <!--
+    //using the async
     <div class="col-2" *ngFor="let member of members">
+        <app-member-card [memberIn]="member"></app-member-card>
+    </div>
+    -->
+    <div class="col-2" *ngFor="let member of membersAsync$ | async">
         <app-member-card [memberIn]="member"></app-member-card>
     </div>
 </div>

@@ -31,4 +31,6 @@ public interface IUserBusinessLogic
     Task<LoggedInUserDto> LoginAsync(LoginDto login);
 
     Task<LoggedInUserDto> RegisterUserAsync(UserRegisterDto registerUser);
+
+    Task<bool> UpdateUserAsync(MemberUpdateDto memberUpdateDto, UserClaimGetDto claims);
 }

@@ -35,7 +35,8 @@ public class TokenService : ITokenService
         {
             new Claim(JwtRegisteredClaimNames.NameId, user.Id.ToString()),
             new Claim(JwtRegisteredClaimNames.UniqueName, user.UserName),
-            new Claim("Guid", user.Guid.ToString())
+            new Claim("Guid", user.Guid.ToString()),
+            new Claim("DisplayName", user.DisplayName)
         };
 
         //signing credentials

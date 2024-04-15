@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using MSC.Core.BusinessLogic;
 using MSC.Core.DB.Entities;
 using MSC.Core.Dtos;
+using MSC.Core.Extensions;
 
 namespace MSC.WebApi.Controller;
 
@@ -69,4 +70,20 @@ public class UsersController : BaseApiController
         }
         return Ok(user);
     }
+
+    [HttpPut]
+    public async Task<ActionResult> UpdateUser([FromBody] MemberUpdateDto member)
+    {
+        //get the user claims
+        var userClaims = User.GetUserClaims();
+        if(userClaims == null || (!userClaims.HasGuid || !userClaims.HasUserName))
+            return BadRequest("User Issue");
+
+        var isUpdate = await _userBusinessLogic.UpdateUserAsync(member, userClaims);
+        if(!isUpdate)
+            return BadRequest("User not updated");
+
+        return NoContent(); //204
+    }
+
 }

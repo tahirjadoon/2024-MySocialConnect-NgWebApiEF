@@ -4,5 +4,6 @@ export const environment = {
   displayConsoleLog: false,
   usebaseUrlHttps: true,
   webApiBaseUrlHttps: 'api/',
-  webApiBaseUrlHttp: 'api/'
+  webApiBaseUrlHttp: 'api/',
+  loadingSpinnerDelayMiliSec: 1000 
 };

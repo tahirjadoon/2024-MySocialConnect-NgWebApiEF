@@ -6,6 +6,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { TabsModule } from 'ngx-bootstrap/tabs';
 import { ToastrModule } from 'ngx-toastr';
+import { NgxSpinnerModule } from 'ngx-spinner';
 
 //app routing module
 import { AppRoutingModule } from '../../app-routing.module';
@@ -65,6 +66,7 @@ import { DisplayFgerrorsComponent } from '../../site/errors/display-fgerrors/dis
     BsDropdownModule.forRoot(),
     TabsModule.forRoot(),
     ToastrModule.forRoot({ positionClass: 'toast-bottom-right'}),
+    NgxSpinnerModule.forRoot({type: 'line-scale-party'})
   ],
   exports: [
     AppRoutingModule,
@@ -75,6 +77,7 @@ import { DisplayFgerrorsComponent } from '../../site/errors/display-fgerrors/dis
     BsDropdownModule,
     TabsModule,
     ToastrModule,
+    NgxSpinnerModule,
   ]
 })
 export class SharedModule { }

@@ -202,4 +202,27 @@ public class UserBusinessLogic : IUserBusinessLogic
     }
 
     #endregion Register
+
+    #region Updates
+
+    public async Task<bool> UpdateUserAsync(MemberUpdateDto memberUpdateDto, UserClaimGetDto claims)
+    {
+        var user = await _userRepo.GetUserRawAsync(claims.UserName);
+        if(user == null || user.Guid != claims.Guid)
+            return false;
+
+        //we have the mapped. current properties will be kept as is while other will be updated
+        var updates = _mapper.Map(memberUpdateDto, user);
+
+        //issue update
+        _userRepo.Update(updates);
+
+        //save updates
+        if(await _userRepo.SaveAllAsync())
+            return true;
+
+        return false;
+    }
+
+    #endregion Updates
 }

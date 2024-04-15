@@ -10,6 +10,7 @@ export class HelperService {
   private isLogConsole: boolean = environment.displayConsoleLog;
   private baseUrlServer: string = environment.usebaseUrlHttps ? environment.webApiBaseUrlHttps : environment.webApiBaseUrlHttp;
   //private baseUrlApi: string = `${this.baseUrlServer}api`;
+  private loadingSpinnerDelayMiliSec: number = environment.loadingSpinnerDelayMiliSec;
 
   constructor() { 
     if(this.isLogConsole){
@@ -22,6 +23,7 @@ export class HelperService {
   public Title: string = this.title;
   public IsProduction: boolean = this.isProduction;
   public IsLogConsole: boolean = this.isLogConsole;
+  public LoadingSpinnerDelayMiliSec: number = this.loadingSpinnerDelayMiliSec;
 
   public logIf(text: any){
     if(!this.isLogConsole) return;

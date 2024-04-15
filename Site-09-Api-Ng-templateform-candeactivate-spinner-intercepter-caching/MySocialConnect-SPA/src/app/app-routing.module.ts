@@ -13,6 +13,7 @@ import { ServerErrorComponent } from './site/errors/server-error/server-error.co
 import { NotLoggedInComponent } from './site/errors/not-logged-in/not-logged-in.component';
 
 import { authGuard } from './core/guards/auth.guard';
+import { preventUnsavedChangesGuard } from './core/guards/prevent-unsaved-changes.guard';
 
 
 const routes: Routes = [
@@ -25,7 +26,7 @@ const routes: Routes = [
     children: [
       { path: 'members', component: MemberListComponent },
       { path: 'members/detail/:guid/:name', component: MemberDetailComponent },
-      { path: 'members/edit', component: MemberEditComponent },
+      { path: 'members/edit', component: MemberEditComponent, canDeactivate: [preventUnsavedChangesGuard] },
       { path: 'lists', component: ListsComponent },
       { path: 'messages', component: MessagesComponent },
     ]

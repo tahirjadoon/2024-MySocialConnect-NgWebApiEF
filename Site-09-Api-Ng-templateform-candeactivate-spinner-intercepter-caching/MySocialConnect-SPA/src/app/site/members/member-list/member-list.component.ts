@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { UserDto } from 'src/app/core/models-interfaces/user-dto.model';
 import { MemberService } from 'src/app/core/services/member.service';
 
@@ -9,7 +9,9 @@ import { MemberService } from 'src/app/core/services/member.service';
   styleUrls: ['./member-list.component.css']
 })
 export class MemberListComponent implements OnInit, OnDestroy {
+
   members: UserDto[] = [];
+  membersAsync$: Observable<UserDto[]> | undefined;
 
   membersSubscription!: Subscription;
 
@@ -20,7 +22,9 @@ export class MemberListComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.loadMembers();
+    //not using load members any more but using membersAsync$
+    //this.loadMembers();
+    this.membersAsync$ = this.memberService.getMembers();
   }
 
   loadMembers(){

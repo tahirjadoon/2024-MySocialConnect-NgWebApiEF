@@ -37,11 +37,11 @@ export class MemberService {
    * @returns Observable userDto[]
    */
   getMembers(): Observable<UserDto[]>{
-    /*
+    
+    //state
     if(this.members.length > 0){
       return of(this.members);
     }
-    */
 
     const url = this.helperService.urlUsersAll;
     this.helperService.logIfFrom(url, "memberService getMembers");
@@ -61,14 +61,14 @@ export class MemberService {
    * @returns Observable userDto
    */
   getMemberByGuid(guid: string): Observable<UserDto>{
-    /*
+    
+    //state
     if(this.members.length > 0){
       const member = this.members.find(x => x.guId === guid);
       if(member){
         return of(member);
       }
     }
-    */
 
     const url = this.helperService.replaceKeyValue(this.helperService.urlUserGetByGuid, this.helperService.keyGuid, guid, "");
     this.helperService.logIfFrom(url, "memberService getMemberByGuid");
@@ -80,5 +80,18 @@ export class MemberService {
           return member;
         })
       );
+  }
+
+  updateMember(user: UserDto){
+    const url = this.helperService.urlUserUpdate;
+    this.helperService.logIfFrom(url, "memberService updateMember");
+
+    return this.httpClientService.put(url, user).pipe(
+      map(() => {
+        const index = this.members.indexOf(user);
+        //this.members[index] = user;
+        this.members[index] = {...this.members[index], ...user};
+      })
+    );
   }
 }

@@ -12,6 +12,7 @@ import { ServerErrorComponent } from './site/errors/server-error/server-error.co
 
 import { ErrorInterceptor } from './core/interceptors/error.interceptor';
 import { JwtInterceptor } from './core/interceptors/jwt.interceptor';
+import { LoadingInterceptor } from './core/interceptors/loading.interceptor';
 
 
 
@@ -29,6 +30,7 @@ import { JwtInterceptor } from './core/interceptors/jwt.interceptor';
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: LoadingInterceptor, multi: true },
   ],
   bootstrap: [AppComponent]
 })
