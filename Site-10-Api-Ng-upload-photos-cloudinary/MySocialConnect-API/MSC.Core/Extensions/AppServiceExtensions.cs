@@ -7,7 +7,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using MSC.Core.BusinessLogic;
+using MSC.Core.Constants;
 using MSC.Core.DB.Data;
+using MSC.Core.Helper;
 using MSC.Core.Mappers;
 using MSC.Core.Repositories;
 using MSC.Core.Services;
@@ -38,8 +40,14 @@ public static class AppServiceExtensions
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IUserBusinessLogic, UserBusinessLogic>();
         services.AddScoped<ITokenService, TokenService>();
+        services.AddScoped<IPhotoService, PhotoService>();
         //services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies()); //when have single project/assembly
         services.AddAutoMapper(typeof(AutoMapperProfiles).Assembly);
+
+        //adding the Cloudinary to read data from
+        //check programs.cs for ref: builder.Services.Configure<EnvConfig>(configuration);
+        services.Configure<CloudinaryConfig>(config.GetSection(ConfigKeyConstants.CloudinarySettingsKey));
+        
         return services;
     }
 

@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MSC.Core.BusinessLogic;
 using MSC.Core.DB.Entities;
@@ -84,6 +86,73 @@ public class UsersController : BaseApiController
             return BadRequest("User not updated");
 
         return NoContent(); //204
+    }
+
+    [HttpPost("add/photo")]
+    public async Task<ActionResult<PhotoDto>> AddPhoto(IFormFile file)
+    {
+        //get the user claims
+        var userClaims = User.GetUserClaims();
+        if(userClaims == null || (!userClaims.HasGuid || !userClaims.HasUserName))
+            return BadRequest("User Issue");
+
+        var photoDto = await _userBusinessLogic.AddPhotoAsync(file, userClaims);
+        if(photoDto == null)
+            return BadRequest("Problem adding photo");
+
+        //this is to tell from where to pick the info. Point to GetUserByGuid and pass the guid to it
+        //this will return 401
+        //look at the location headers for the for url to the action that gets the user by guid
+        return CreatedAtRoute("GetUserByGuid", new {guid = userClaims.Guid.ToString() }, photoDto);
+    }
+
+    [HttpDelete("delete/{photoId}/photo")]
+    public async Task<ActionResult> DeletePhoto(int photoId)
+    {
+        //get the user claims
+        var userClaims = User.GetUserClaims();
+        if(userClaims == null || (!userClaims.HasGuid || !userClaims.HasUserName))
+            return BadRequest("User Issue");
+        
+        var result = await _userBusinessLogic.DeletePhotoAsync(photoId, userClaims);
+
+        ActionResult actionResult = BadRequest("Unable to delete photo");
+        if (result != null)
+        {
+            switch (result.HttpStatusCode)
+            {
+                case HttpStatusCode.OK:
+                    actionResult = Ok();
+                    break;
+                case HttpStatusCode.BadRequest:
+                    actionResult = BadRequest(result.Message ?? "Unable to delete photo");
+                    break;
+                case HttpStatusCode.NotFound:
+                    actionResult = NotFound(result.Message ?? "Photo not found");
+                    break;
+                default:
+                    actionResult = BadRequest("Unable to delete photo");
+                    break;
+            }
+        }
+
+        return actionResult;
+    }
+
+    [HttpPut("set/photo/{photoId}/main")]
+    public async Task<ActionResult> SetMainPhoto(int photoId)
+    {
+        //get claims
+        var userClaims = User.GetUserClaims();
+        if (userClaims == null || (!userClaims.HasGuid || !userClaims.HasUserName))
+            return BadRequest("User issue");
+
+        var result = await _userBusinessLogic.SetPhotoMainAsync(photoId, userClaims);
+
+        if (result)
+            return NoContent();
+
+        return BadRequest("Unable to set photo to main");
     }
 
 }

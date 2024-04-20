@@ -7,4 +7,6 @@ public class ConfigKeyConstants
     public const string AllowSpecificOrigins = "AllowSpecificOrigins";
     public const string LoggingLevelDefault = "Logging:LogLevel:Default";
     public const string LoggingLevelMsAspNetCore = "Logging:LogLevel:Microsoft.AspNetCore";
+
+    public const string CloudinarySettingsKey = "CloudinarySettings";
 }

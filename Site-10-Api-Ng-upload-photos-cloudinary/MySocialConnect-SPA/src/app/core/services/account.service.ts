@@ -82,7 +82,7 @@ export class AccountService {
     this.loggedInUserSource.next(user);
   }
 
-  private setAndFireCurrentUser(user: LoggedInUserDto){
+  setAndFireCurrentUser(user: LoggedInUserDto){
     this.localStorageService.setUser(user);
     this.fireCurrentUser(user);
   }

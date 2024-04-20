@@ -94,4 +94,17 @@ export class MemberService {
       })
     );
   }
+
+  setMainPhoto(photoId: number){
+    const url = this.helperService.replaceKeyValue(this.helperService.urlUserPhotoSetMain, this.helperService.keyPhotoId, photoId, "");
+    this.helperService.logIfFrom(url, "memberService setMainPhoto");
+    return this.httpClientService.put(url, {});
+  }
+
+  deletePhoto(photoId: number){
+    const url = this.helperService.replaceKeyValue(this.helperService.urlUserPhotoDelete, this.helperService.keyPhotoId, photoId, "");
+    this.helperService.logIfFrom(url, "memberService deletePhoto");
+    return this.httpClientService.delete(url);
+  }
+
 }

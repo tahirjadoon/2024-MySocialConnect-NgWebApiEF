@@ -7,6 +7,7 @@ import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { TabsModule } from 'ngx-bootstrap/tabs';
 import { ToastrModule } from 'ngx-toastr';
 import { NgxSpinnerModule } from 'ngx-spinner';
+import { FileUploadModule } from 'ng2-file-upload';
 
 //app routing module
 import { AppRoutingModule } from '../../app-routing.module';
@@ -32,6 +33,7 @@ import { NotLoggedInComponent } from '../../site/errors/not-logged-in/not-logged
 import { RegisterReactiveformComponent } from '../../site/register-reactiveform/register-reactiveform.component';
 import { SampleComponent } from '../../site/errors/sample/sample.component';
 import { DisplayFgerrorsComponent } from '../../site/errors/display-fgerrors/display-fgerrors.component';
+
 
 
 
@@ -66,7 +68,8 @@ import { DisplayFgerrorsComponent } from '../../site/errors/display-fgerrors/dis
     BsDropdownModule.forRoot(),
     TabsModule.forRoot(),
     ToastrModule.forRoot({ positionClass: 'toast-bottom-right'}),
-    NgxSpinnerModule.forRoot({type: 'line-scale-party'})
+    NgxSpinnerModule.forRoot({type: 'line-scale-party'}), 
+    FileUploadModule,
   ],
   exports: [
     AppRoutingModule,
@@ -78,6 +81,7 @@ import { DisplayFgerrorsComponent } from '../../site/errors/display-fgerrors/dis
     TabsModule,
     ToastrModule,
     NgxSpinnerModule,
+    FileUploadModule,
   ]
 })
 export class SharedModule { }

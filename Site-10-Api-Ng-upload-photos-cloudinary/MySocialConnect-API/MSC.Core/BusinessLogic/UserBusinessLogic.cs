@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using MSC.Core.DB.Entities;
 using MSC.Core.Dtos;
 using MSC.Core.ExceptionCustom;
@@ -19,12 +21,14 @@ public class UserBusinessLogic : IUserBusinessLogic
     private readonly IUserRepository _userRepo;
     private readonly ITokenService _tokenService;
     private readonly IMapper _mapper;
+    private readonly IPhotoService _photoService;
 
-    public UserBusinessLogic(IUserRepository userRepo, ITokenService tokenService, IMapper mapper)
+    public UserBusinessLogic(IUserRepository userRepo, ITokenService tokenService, IMapper mapper, IPhotoService photoService)
     {
         _userRepo = userRepo;
         _tokenService = tokenService;
         _mapper = mapper;
+        _photoService = photoService;
     }
 
     #region Get Users
@@ -218,6 +222,109 @@ public class UserBusinessLogic : IUserBusinessLogic
         _userRepo.Update(updates);
 
         //save updates
+        if(await _userRepo.SaveAllAsync())
+            return true;
+
+        return false;
+    }
+
+    public async Task<PhotoDto> AddPhotoAsync(IFormFile file, UserClaimGetDto claims)
+    {
+        var appUser = await _userRepo.GetUserRawAsync(claims.UserName, includePhotos: true);
+        if (appUser == null)
+            throw new UnauthorizedAccessException("User not found");
+
+        var result = await _photoService.AddPhotoAsync(file);
+        if(result.Error != null)
+            throw new DataFailException(result.Error?.Message ?? "Photo updload error");
+
+        //success, build photo entity and save
+        var photo = new Photo
+        {
+            Url = result.SecureUrl.AbsoluteUri, //set photo url
+            PublicId = result.PublicId, //setup public id
+            IsMain = appUser.Photos == null || !appUser.Photos.Any() //mark it active
+        };
+
+        //add the photo
+        appUser.Photos.Add(photo);
+        
+        //_userRepo.Update(appUser);
+        if(await _userRepo.SaveAllAsync())
+            return _mapper.Map<PhotoDto>(photo);
+
+        return null;
+    }
+
+    public async Task<BusinessResponse> DeletePhotoAsync(int photoId, UserClaimGetDto claims)
+    {
+        var appUser = await _userRepo.GetUserRawAsync(claims.UserName, includePhotos: true);
+        if (appUser == null)
+            throw new UnauthorizedAccessException("User not found");
+
+        var response = new BusinessResponse();
+
+        var photo = appUser.Photos?.FirstOrDefault(x => x.Id == photoId);
+        if(photo == null)
+        {
+            response.HttpStatusCode = HttpStatusCode.NotFound;
+            response.Message = "Photo not found";
+            return response;
+        }
+
+        if(photo.IsMain)
+        {
+            response.HttpStatusCode = HttpStatusCode.BadRequest;
+            response.Message = "You cannot delete your main photo";
+            return response;
+        }
+
+        //delete from cludinary
+        if(!string.IsNullOrWhiteSpace(photo.PublicId))
+        {
+            var result = await _photoService.DeletePhotoAync(photo.PublicId);
+            if(result.Error != null)
+            {
+                response.HttpStatusCode = HttpStatusCode.BadRequest;
+                response.Message = result.Error?.Message ?? "Unable to delete photo from service";
+                return response;
+            }
+        }
+
+        //remove from data base 
+        appUser.Photos.Remove(photo);
+
+        if(await _userRepo.SaveAllAsync())
+        {
+            response.HttpStatusCode = HttpStatusCode.OK;
+            return response;
+        }
+
+        //here it is an error 
+        response.HttpStatusCode = HttpStatusCode.BadRequest;
+        response.Message = "Unable to delete photo";
+        return response;
+    }
+
+    public async Task<bool> SetPhotoMainAsync(int photoId, UserClaimGetDto claims)
+    {
+        var appUser = await _userRepo.GetUserRawAsync(claims.UserName, includePhotos: true);
+        if (appUser == null)
+            throw new UnauthorizedAccessException("User not found");
+
+        var photo = appUser.Photos?.FirstOrDefault(x => x.Id == photoId);
+        if(photo == null)
+            return false;
+        
+        if(photo.IsMain)
+            throw new DataFailException("This is already your main photo");
+
+        var currentMain = appUser.Photos?.FirstOrDefault( x=> x.IsMain == true);
+        if(currentMain != null)
+            currentMain.IsMain = false;
+        
+        photo.IsMain = true;
+
         if(await _userRepo.SaveAllAsync())
             return true;
 

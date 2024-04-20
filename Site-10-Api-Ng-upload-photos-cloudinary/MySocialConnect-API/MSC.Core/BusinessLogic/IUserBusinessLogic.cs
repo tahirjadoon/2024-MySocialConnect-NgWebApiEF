@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using MSC.Core.DB.Entities;
 using MSC.Core.Dtos;
 
@@ -33,4 +34,10 @@ public interface IUserBusinessLogic
     Task<LoggedInUserDto> RegisterUserAsync(UserRegisterDto registerUser);
 
     Task<bool> UpdateUserAsync(MemberUpdateDto memberUpdateDto, UserClaimGetDto claims);
+
+    Task<PhotoDto> AddPhotoAsync(IFormFile file, UserClaimGetDto claims);
+
+    Task<BusinessResponse> DeletePhotoAsync(int photoId, UserClaimGetDto claims);
+
+    Task<bool> SetPhotoMainAsync(int photoId, UserClaimGetDto claims);
 }

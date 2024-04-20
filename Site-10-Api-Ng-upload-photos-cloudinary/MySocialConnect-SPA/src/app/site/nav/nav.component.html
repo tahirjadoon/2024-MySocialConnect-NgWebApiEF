@@ -21,7 +21,10 @@
 
         <!--logged in dropped down section-->
         <div class="dropdown" *ngIf="isLoggedIn" dropdown>
-          <a class="dropdown-toggle text-light text-decoration-none" dropdownToggle>
+          <!--add the main photo-->
+          <img src="{{loggedInUser?.mainPhotoUrl || './assets/user.png'}}" alt="">
+
+          <a class="dropdown-toggle text-light text-decoration-none ms-2" dropdownToggle>
             Welcome {{loggedInUser?.displayName | titlecase}}
           </a>
           <div class="dropdown-menu" *dropdownMenu>
