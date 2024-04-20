@@ -1,0 +1,86 @@
+/* You can add global styles to this file, and also import other style files */
+.title {color: #FF4500;}
+.titleHeader { color: #fff;}
+.api-url { color: #FF8C00; }
+.main-container {
+    margin-top: 60px;  
+    margin-bottom: 65px; /*with footer*/
+}
+a.welcome-user, a.welcome-user:link, a.welcome-user:visited, a.welcome-user:hover, a.welcome-user:active { text-decoration: none; color: #FF7F50 !important; }
+a.welcome-user:hover { color: #FF4500 !important; cursor: pointer; }
+.dropdown-toggle, .dropdown-item {cursor: pointer;}
+footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    height: 60px;
+    border-top-width: 5px;
+    border-top-style: solid;
+    border-top-color: #FF7F50;
+    display: block;
+    padding: 0 10px;
+    margin-top: 10px;
+    text-align: center;
+    background-color: #fff;
+ }
+
+.ng-valid[required], .ng-valid.required  {
+    border-left: 5px solid #42A948; /* green */
+}  
+.ng-invalid:not(form)  {
+    border-left: 5px solid #a94442; /* red */
+}
+
+/********* Members detail page tabs start **************/
+.tab-panel {
+    border: 1px solid #ddd;
+    padding: 10px;
+    border-radius: 4px;
+  }
+  
+  .nav-tabs > li.open, .member-tabset > .nav-tabs > li:hover {
+    border-bottom: 4px solid #fbcdcf;
+  }
+  
+  .member-tabset > .nav-tabs > li.open > a, .member-tabset > .nav-tabs > li:hover > a {
+    border: 0;
+    background: none !important;
+    color: #333333;
+  }
+  
+  .member-tabset > .nav-tabs > li.open > a > i, .member-tabset > .nav-tabs > li:hover > a > i {
+    color: #a6a6a6;
+  }
+  
+  .member-tabset > .nav-tabs > li.open .dropdown-menu, .member-tabset > .nav-tabs > li:hover .dropdown-menu {
+    margin-top: 0px;
+  }
+  
+  .member-tabset > .nav-tabs > li.active {
+    border-bottom: 4px solid #E95420;
+    position: relative;
+  }
+  
+  .member-tabset > .nav-tabs > li.active > a {
+    border: 0 !important;
+    color: #333333;
+  }
+  
+  .member-tabset > .nav-tabs > li.active > a > i {
+    color: #404040;
+  }
+  
+  .member-tabset > .tab-content {
+    margin-top: -3px;
+    background-color: #fff;
+    border: 0;
+    border-top: 1px solid #eee;
+    padding: 15px 0;
+  }
+  /********* Members detail page tabs end **************/
+
+  /********* photo gallery styles start **************/
+  .gallery{
+    height: 600px;
+  }
+  /********* photo gallery styles end **************/
