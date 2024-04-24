@@ -4,6 +4,7 @@ import { TemplateFormValidatorsService } from '../services/template-form-validat
 import { Observable } from 'rxjs';
 
 //https://www.freecodecamp.org/news/how-to-validate-angular-template-driven-forms/
+//https://blog.angular-university.io/angular-custom-validators/ without service and using validators
 //also check TemplateFormValidatorsService
 
 @Directive({

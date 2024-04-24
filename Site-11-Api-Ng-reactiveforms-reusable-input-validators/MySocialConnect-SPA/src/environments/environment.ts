@@ -5,5 +5,5 @@ export const environment = {
   usebaseUrlHttps: true,
   webApiBaseUrlHttps: 'api/',
   webApiBaseUrlHttp: 'api/',
-  loadingSpinnerDelayMiliSec: 1000 
+  loadingSpinnerDelayMiliSec: 500 
 };

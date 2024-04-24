@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
+import { SpinnerNotAllowed } from '../models-interfaces/spinner-not-allowed.model';
 
 @Injectable({
   providedIn: 'root'
@@ -76,6 +77,27 @@ export class HelperService {
   public urlAccountRegister: string = `${this.urlAccount}/register`;
   public urlAccountLogin: string = `${this.urlAccount}/login`;
   public urlAccountCheckUser: string = `${this.urlAccount}/checkUser/${this.keyName}`;
+
+  //paths for which the spinner is not needed
+  private spinnerNotAllowedUrls: SpinnerNotAllowed[] = [
+    new SpinnerNotAllowed(`${this.urlAccount}/checkUser/`, 'Get')
+  ];
+  public isSpinnerallowed(url: string, method: string): boolean{
+    let isSpinnerAllowed: boolean = true;
+
+    if(!this.spinnerNotAllowedUrls || this.spinnerNotAllowedUrls.length <= 0) return isSpinnerAllowed;
+    if(!url) return isSpinnerAllowed;
+
+    for(let item of this.spinnerNotAllowedUrls){
+      if(url.toLowerCase().includes(item.url.toLowerCase()) && method.toLowerCase() === item.method.toLowerCase()){
+        isSpinnerAllowed = false;
+        break;
+      }
+    }
+
+    return isSpinnerAllowed;
+  }
+
 
   //sampe controller urls for testing errors
   private urlSample = `${this.baseUrlServer}sample`;

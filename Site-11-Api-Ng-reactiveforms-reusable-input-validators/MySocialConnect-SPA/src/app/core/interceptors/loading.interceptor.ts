@@ -18,13 +18,17 @@ export class LoadingInterceptor implements HttpInterceptor {
   ) {}
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
-    this.spinnerBusyService.busy();
+    const isSpinnerAllowed:boolean = this.helperService.isSpinnerallowed(request.url, request.method);
+    
+    if(isSpinnerAllowed)
+      this.spinnerBusyService.busy();
 
     //return next.handle(request);
     return next.handle(request).pipe(
       delay(this.helperService.LoadingSpinnerDelayMiliSec),
       finalize(() => {
-        this.spinnerBusyService.idle();
+        if(isSpinnerAllowed)
+          this.spinnerBusyService.idle();
       })
     );
   }

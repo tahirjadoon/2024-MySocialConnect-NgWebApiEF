@@ -8,6 +8,7 @@ import { TabsModule } from 'ngx-bootstrap/tabs';
 import { ToastrModule } from 'ngx-toastr';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { FileUploadModule } from 'ng2-file-upload';
+import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 
 //app routing module
 import { AppRoutingModule } from '../../app-routing.module';
@@ -31,11 +32,13 @@ import { PhotoEditorComponent } from '../../site/members/photo-editor/photo-edit
 import { NotLoggedInComponent } from '../../site/errors/not-logged-in/not-logged-in.component';
 
 import { RegisterReactiveformComponent } from '../../site/register-reactiveform/register-reactiveform.component';
+import { RegisterReactiveformReusablecontrolsComponent } from '../../site/register-reactiveform-reusablecontrols/register-reactiveform-reusablecontrols.component';
+
 import { SampleComponent } from '../../site/errors/sample/sample.component';
 import { DisplayFgerrorsComponent } from '../../site/errors/display-fgerrors/display-fgerrors.component';
 
-
-
+import { TextInputComponent } from '../../site/formControls/text-input/text-input.component';
+import { DateInputComponent } from '../../site/formControls/date-input/date-input.component';
 
 @NgModule({
   declarations: [
@@ -47,6 +50,7 @@ import { DisplayFgerrorsComponent } from '../../site/errors/display-fgerrors/dis
     HomeComponent,
     RegisterComponent, //template driven form
     RegisterReactiveformComponent, //reactive form
+    RegisterReactiveformReusablecontrolsComponent, //reactive form
     MemberListComponent, 
     //MemberDetailComponent, this is now a stand alone component so due ng-gallery which is stand alone
     ListsComponent, 
@@ -56,7 +60,9 @@ import { DisplayFgerrorsComponent } from '../../site/errors/display-fgerrors/dis
     PhotoEditorComponent, 
     NotLoggedInComponent, 
     DisplayFgerrorsComponent,
-    SampleComponent
+    SampleComponent,
+    TextInputComponent,
+    DateInputComponent,
   ],
   imports: [
     CommonModule,
@@ -70,6 +76,7 @@ import { DisplayFgerrorsComponent } from '../../site/errors/display-fgerrors/dis
     ToastrModule.forRoot({ positionClass: 'toast-bottom-right'}),
     NgxSpinnerModule.forRoot({type: 'line-scale-party'}), 
     FileUploadModule,
+    BsDatepickerModule.forRoot(),
   ],
   exports: [
     AppRoutingModule,
@@ -82,6 +89,7 @@ import { DisplayFgerrorsComponent } from '../../site/errors/display-fgerrors/dis
     ToastrModule,
     NgxSpinnerModule,
     FileUploadModule,
+    BsDatepickerModule,
   ]
 })
 export class SharedModule { }

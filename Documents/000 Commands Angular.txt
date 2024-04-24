@@ -40,4 +40,80 @@ Commands:
   
 --------------------------------
 
+RXJS
+	forkJoin
+	combineLatest
+		const user$ = this.accountService.currentLoggedInUser$;
+		const param$ = this.activateRoute.queryParamMap;
+		this.combineLatestSubscription = combineLatest([user$,param$]).subscribe({
+		  next: r => {
+			this.doAction(r);
+		  }
+		});
+		
+		doAction(r: any){
+			const userResult = r[0];
+			const paramResult = r[1];
+
+			this.isLoggedIn = !!userResult;
+
+			const temp = paramResult.get('returnUrl');
+			if(temp) this.returnUrl = temp;
+
+			if(this.isLoggedIn){
+			  let redirectTo = "/members";
+			  if(temp)
+				redirectTo = temp;
+			  this.router.navigateByUrl(redirectTo);
+			}
+		  }
+	
+	switchMap
+		constructor(private survey: SurveyService, private route: ActivatedRoute) {}
+
+		this.route.params
+			.switchMap((params: Params) => this.survey.getSurvey(params['id']))
+			.subscribe((survey: any) => {
+			  // update the form controls
+			});
+	
 @ViewChild: to work with the element inside the html from component  
+	@ViewChild('username', { static: false }) userNameElement!: ElementRef;
+	
+	this.userNameElement.nativeElement.focus();
+	
+@Output
+	@Output('cancelRegister') cancelRegister = new EventEmitter();
+	this.cancelRegister.emit(false);
+	
+	<app-register (cancelRegister)="onCancelRegisterMode($event)"></app-register>
+	
+@Input
+	@Input() memberIn: UserDto | undefined; // = <UserDto>{};
+	
+	<app-member-card [memberIn]="member"></app-member-card>
+	
+async pipe
+	membersAsync$: Observable<UserDto[]> | undefined;
+	this.membersAsync$ = this.memberService.getMembers();
+	
+	<div class="col-2" *ngFor="let member of membersAsync$ | async">
+        <app-member-card [memberIn]="member"></app-member-card>
+    </div>
+	
+ReactiveForm
+	Setting reference getters
+	
+	get rf() {
+     return this.registerForm.controls;
+   }
+ 
+   rf2(key: string) {
+     return this.registerForm.get(key) as FormControl;
+   }
+   
+Redirect
+	this.router.navigateByUrl('/members');
+	
+	routerLink="/"
+	

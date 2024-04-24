@@ -17,7 +17,9 @@
     <div *ngIf="registerMode" class="conatiner">
         <div class="row justify-content-center">
             <div class="col-4">
-                <app-register (cancelRegister)="onCancelRegisterMode($event)"></app-register>
+                <!--<app-register (cancelRegister)="onCancelRegisterMode($event)"></app-register>-->
+                <!--<app-register-reactiveform (cancelRegister)="onCancelRegisterMode($event)"></app-register-reactiveform>-->
+                <app-register-reactiveform-reusablecontrols (cancelRegister)="onCancelRegisterMode($event)"></app-register-reactiveform-reusablecontrols>
             </div>
         </div>
     </div>

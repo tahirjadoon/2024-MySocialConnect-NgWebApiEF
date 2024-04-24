@@ -3,6 +3,7 @@ import { AbstractControl, NG_VALIDATORS, ValidationErrors, Validator } from '@an
 import { TemplateFormValidatorsService } from '../services/template-form-validators.service';
 
 //https://www.freecodecamp.org/news/how-to-validate-angular-template-driven-forms/
+//https://blog.angular-university.io/angular-custom-validators/ without service and using validators
 //also check TemplateFormValidatorsService
 
 @Directive({
