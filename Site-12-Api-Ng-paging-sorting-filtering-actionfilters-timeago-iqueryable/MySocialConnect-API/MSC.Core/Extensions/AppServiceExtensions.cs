@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using MSC.Core.ActionFilters;
 using MSC.Core.BusinessLogic;
 using MSC.Core.Constants;
 using MSC.Core.DB.Data;
@@ -48,6 +49,9 @@ public static class AppServiceExtensions
         //check programs.cs for ref: builder.Services.Configure<EnvConfig>(configuration);
         services.Configure<CloudinaryConfig>(config.GetSection(ConfigKeyConstants.CloudinarySettingsKey));
         
+        //add the action filter as a service, it wil get applied to the abse controller
+        services.AddScoped<LogUserActivityFilter>();
+
         return services;
     }
 

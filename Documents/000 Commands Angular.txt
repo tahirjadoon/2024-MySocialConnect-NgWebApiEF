@@ -12,6 +12,8 @@ Use --dry-run to do a test run and see what is getting added and where
 > ng g interface Employee --type=model [interface]
 > ng g class EmployeeClass --type=model [class]
 > ng g interceptor error --skip-tests [interceptor]
+> ng g enum zMembers [enum]
+> ng g e zMembers [enum]
 > ng generate environments
 
 > ng g --help
@@ -105,7 +107,7 @@ ReactiveForm
 	Setting reference getters
 	
 	get rf() {
-     return this.registerForm.controls;
+     return this.registerForm.controls;s
    }
  
    rf2(key: string) {
@@ -117,3 +119,8 @@ Redirect
 	
 	routerLink="/"
 	
+Reactive form 
+	<form [formGroup]="registerForm" (ngSubmit)="registerForm.valid && onRegister()" autocomplete="off">
+	
+Template driven form 
+	<form #registerForm="ngForm" (ngSubmit)="onRegister()" autocomplete="off" [appMustMatch]="['password','confirmpassword']">

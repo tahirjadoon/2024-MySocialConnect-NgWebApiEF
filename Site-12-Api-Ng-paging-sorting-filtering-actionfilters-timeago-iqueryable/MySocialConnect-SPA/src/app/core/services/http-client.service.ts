@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, retry } from 'rxjs';
 
@@ -29,6 +29,22 @@ export class HttpClientService {
   get<TReturn>(url: string, params = {}): Observable<TReturn> {
     return this.httpClient
       .get<TReturn>(url, params )
+      .pipe(retry(this.retries));
+  }
+
+   /**
+   * A GET method
+   * @param url api url 
+   * @param params pass empty meaning do not pass when not used, will cover stuff like ?x=1&y=2,
+   *        instead use HttpParams  
+   *        let params = new HttpParams();
+   *        params = params.append('pageNumber', page.toString());
+   *        params = params.append('pageSize', itemsPerPage.toString());
+   * @returns rreturns the full HttpResponse
+   */
+  getWithFullResponse<TReturn>(url: string, params = {}) : Observable<HttpResponse<TReturn>> {
+    return this.httpClient
+      .get<TReturn>(url, { observe: 'response', params })
       .pipe(retry(this.retries));
   }
 

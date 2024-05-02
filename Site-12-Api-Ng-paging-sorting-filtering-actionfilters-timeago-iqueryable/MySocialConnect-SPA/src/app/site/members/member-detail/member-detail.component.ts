@@ -5,18 +5,18 @@ import { TabsModule } from 'ngx-bootstrap/tabs';
 import { GalleryItem, GalleryModule, ImageItem } from 'ng-gallery';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
+import { TimeagoModule } from 'ngx-timeago';
 
 import { UserDto } from '../../../core/models-interfaces/user-dto.model';
 
 import { MemberService } from '../../../core/services/member.service';
-
 
 @Component({
   selector: 'app-member-detail',
   standalone: true,
   templateUrl: './member-detail.component.html',
   styleUrls: ['./member-detail.component.css'],
-  imports: [CommonModule, TabsModule, GalleryModule]
+  imports: [CommonModule, TabsModule, GalleryModule, TimeagoModule]
 })
 export class MemberDetailComponent implements OnInit, OnDestroy {
   

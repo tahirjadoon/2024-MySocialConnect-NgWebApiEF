@@ -8,6 +8,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using MSC.Core.DB.Entities;
 using MSC.Core.Dtos;
+using MSC.Core.Dtos.Pagination;
 using MSC.Core.ExceptionCustom;
 using MSC.Core.Extensions;
 using MSC.Core.Mappers;
@@ -47,9 +48,10 @@ public class UserBusinessLogic : IUserBusinessLogic
     }
 
     //same as above "GetUsersAsync" but using auto mapper queryable extensions
-    public async Task<IEnumerable<UserDto>> GetUsersAMQEAsync()
+    //signature changed due to pagination
+    public async Task<PagedList<UserDto>> GetUsersAMQEAsync(UsersSearchParamDto userParams, Guid userGuid)
     {
-        var users = await _userRepo.GetUsersAMQEAsync();
+        var users = await _userRepo.GetUsersAMQEAsync(userParams, userGuid);
         if(users == null || !users.Any()) return null;
         return users;
     }
@@ -329,6 +331,21 @@ public class UserBusinessLogic : IUserBusinessLogic
             return true;
 
         return false;
+    }
+
+    public async Task LogUserActivityAsync(int id)
+    {
+       if(id <= 0) return;
+
+        //app user 
+        var user = await _userRepo.GetUserAsync(id);
+        if (user == null) return;
+
+        //update the last active date 
+        user.LastActive = DateTime.UtcNow;
+
+        //update 
+        await _userRepo.SaveAllAsync();
     }
 
     #endregion Updates

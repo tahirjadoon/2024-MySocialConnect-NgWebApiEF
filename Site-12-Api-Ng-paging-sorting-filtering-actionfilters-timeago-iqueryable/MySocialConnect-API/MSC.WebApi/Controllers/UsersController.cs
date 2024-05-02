@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using MSC.Core.BusinessLogic;
 using MSC.Core.DB.Entities;
 using MSC.Core.Dtos;
+using MSC.Core.Dtos.Pagination;
 using MSC.Core.Extensions;
 
 namespace MSC.WebApi.Controller;
@@ -24,15 +25,32 @@ public class UsersController : BaseApiController
         _userBusinessLogic = userBusinessLogic;
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="userParams">Passed as query string</param>
+    /// <returns></returns>
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<UserDto>>> GetUsers()
+    public async Task<ActionResult<PagedList<UserDto>>> GetUsers([FromQuery]UsersSearchParamDto userParams)
     {
+        //get current user
+        var currentUser = await _userBusinessLogic.GetUserAMQEAsync(User.GetUserName());
+        if(currentUser == null)
+            return BadRequest("User issue");
+
         //var users = await _userBusinessLogic.GetUsersAsync();
-        var users = await _userBusinessLogic.GetUsersAMQEAsync();
+        if(string.IsNullOrWhiteSpace(userParams.Gender))
+            userParams.Gender = currentUser.Gender.ToLower() == "male" ? "female" : "male";
+
+        var users = await _userBusinessLogic.GetUsersAMQEAsync(userParams, currentUser.GuId);
         if (users == null || !users.Any())
         {
             return NotFound("No users found!");
         }
+
+        //write pagination header
+        Response.AddPaginationHeader(users.CurrentPage, users.PageSize, users.TotalCount, users.TotalPages);
+
         return Ok(users);
     }
 

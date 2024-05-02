@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using MSC.Core.DB.Entities;
 using MSC.Core.Dtos;
+using MSC.Core.Dtos.Pagination;
 
 namespace MSC.Core.BusinessLogic;
 
@@ -11,7 +12,9 @@ public interface IUserBusinessLogic
 {
     Task<IEnumerable<UserDto>> GetUsersAsync();
     //same as above "GetUsersAsync" but using auto mapper queryable extensions
-    Task<IEnumerable<UserDto>> GetUsersAMQEAsync();
+    //signature changed due to pagination
+    //Task<IEnumerable<UserDto>> GetUsersAMQEAsync();
+    Task<PagedList<UserDto>> GetUsersAMQEAsync(UsersSearchParamDto userParams, Guid userGuid);
 
     Task<AppUser> GetUserRawAsync(string userName);
 
@@ -40,4 +43,6 @@ public interface IUserBusinessLogic
     Task<BusinessResponse> DeletePhotoAsync(int photoId, UserClaimGetDto claims);
 
     Task<bool> SetPhotoMainAsync(int photoId, UserClaimGetDto claims);
+
+    Task LogUserActivityAsync(int id);
 }

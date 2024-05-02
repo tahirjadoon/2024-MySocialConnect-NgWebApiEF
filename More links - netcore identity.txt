@@ -1,0 +1,2 @@
+https://code-maze.com/asp-net-core-identity-series/
+https://code-maze.com/email-confirmation-aspnet-core-identity/

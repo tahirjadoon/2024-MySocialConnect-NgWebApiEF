@@ -6,9 +6,12 @@ using System.Threading.Tasks;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
+using MSC.Core.Constants;
 using MSC.Core.DB.Data;
 using MSC.Core.DB.Entities;
 using MSC.Core.Dtos;
+using MSC.Core.Dtos.Pagination;
+using MSC.Core.Extensions;
 
 namespace MSC.Core.Repositories;
 
@@ -49,12 +52,45 @@ public class UserRepository : IUserRepository
     }
 
     //same as above "GetUsersAsync" but using auto mapper queryable extensions
-    public async Task<IEnumerable<UserDto>> GetUsersAMQEAsync()
+    //with pagination changed the signature
+    //public async Task<IEnumerable<UserDto>> GetUsersAMQEAsync()
+    public async Task<PagedList<UserDto>> GetUsersAMQEAsync(UsersSearchParamDto userParams, Guid userGuid)
     {
+        /*
          var users = await _context.Users
                     .ProjectTo<UserDto>(_mapper.ConfigurationProvider)
                     .ToListAsync();
         return users;
+        */
+        var query = _context.Users.AsQueryable();
+        //apply filters
+        query = query.Where(u =>u.Guid != userGuid);
+        if(!string.IsNullOrWhiteSpace(userParams.Gender))
+            query = query.Where(u => u.Gender == userParams.Gender);
+        
+        var minDob = userParams.MaxAge.CalculateMinDob();
+        var maxDob = userParams.MinAge.CalculateMaxDob();
+        query = query.Where(u => u.DateOfBirth >= minDob && u.DateOfBirth <= maxDob);
+
+        if (!string.IsNullOrWhiteSpace(userParams.OrderBy))
+        {
+            //the new switch statement. _ is the default
+            query = userParams.OrderBy switch
+            {
+                DataConstants.Created => query.OrderByDescending(u => u.CreatedOn),
+                _ => query.OrderByDescending(u => u.LastActive)
+            };
+        }
+
+        var finalQuery = query
+                    .ProjectTo<UserDto>(_mapper.ConfigurationProvider)
+                    .AsNoTracking() //EF will not track
+                    ;
+
+        //user pagedList class
+        var pageList = await PagedList<UserDto>.CreateAsync(finalQuery, userParams.PageNumber, userParams.PageSize);
+
+        return pageList;
     }
 
     public async Task<AppUser> GetUserRawAsync(string userName, bool includePhotos = false)
@@ -72,12 +108,19 @@ public class UserRepository : IUserRepository
         return user;
     }
 
-    public async Task<AppUser> GetUserAsync(int id)
+    public async Task<AppUser> GetUserAsync(int id, bool includePhotos = false)
     {
-        //var user = await _context.Users.FindAsync(id);
-        var user = await _context.Users
+        AppUser user  = null;
+        if(includePhotos)
+        {
+            user = await _context.Users
                                 .Include(p => p.Photos)
                                 .FirstOrDefaultAsync(x => x.Id == id);
+        }
+        else{
+            user = await _context.Users.FindAsync(id);
+        }
+        
         return user;
     }
 
