@@ -1,0 +1,24 @@
+<div class="card mb-4" *ngIf="memberIn">
+    <div class="card-img-wrapper">
+        <img src="{{memberIn.photoUrl || './assets/user.png'}}" alt="{{memberIn.displayName}}" class="card-img-top">
+        <!--buttons will be absolutley positioned-->
+        <ul class="list-inline member-icons animate-icons text-center">
+            <li class="list-inline-item">
+                <button class="btn btn-primary" routerLink="/members/detail/{{memberIn.guId}}/{{memberIn.displayName}}"><i class="fa fa-regular fa-user"></i></button>
+            </li>
+            <li class="list-inline-item">
+                <button class="btn btn-primary" (click)="onAddLike(memberIn)"><i class="fa fa-thumbs-up"></i></button>
+            </li>
+            <li class="list-inline-item">
+                <button class="btn btn-primary"><i class="fa fa-envelope"></i></button>
+            </li>
+        </ul>
+    </div>
+    <div class="card-body p-1">
+        <h6 class="card-title text-center mb-1">
+            <i class="fa fa-user me-2"></i>
+            {{memberIn.displayName | titlecase}}, {{memberIn.age}}
+        </h6>
+        <p class="card-text text-muted text-center">{{memberIn.city}}</p>
+    </div>
+</div>

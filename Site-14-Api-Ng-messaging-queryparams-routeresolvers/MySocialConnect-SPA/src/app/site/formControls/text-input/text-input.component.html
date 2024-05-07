@@ -1,0 +1,85 @@
+<div class="mb-3">
+    <!-- rf['userName'].errors && (rf['userName'].touched && rf['userName'].dirty) -->
+    <!--use $any for the form control or it will complain about 
+            Type 'AbstractControl | null' is not assignable to type 'FormControl'.Type 'null' is not assignable to type 'FormControl'
+    -->
+    <!--
+    <input 
+        [class.is-invalid]="ngControl.invalid && ngControl.touched"
+        type="{{ type }}"
+        class="form-control" 
+        [formControl]="$any(ngControl.control)"  
+        placeholder="{{ placeHolder }}"
+        >
+    -->
+    <input 
+        [class.is-invalid]="getcontrol.invalid && getcontrol.touched"
+        type="{{ type }}"
+        class="form-control" 
+        [formControl]="getcontrol"  
+        placeholder="{{ placeHolder }}"
+        >
+
+    <!--required-->
+    <div class="invalid-feedback" *ngIf="getcontrol.errors?.['required']">
+        {{label}} is required
+    </div>
+
+    <!--alphaNumeric-->
+    <div class="invalid-feedback" *ngIf="getcontrol.errors?.['onlyAlphaNumeric'] && !getcontrol.errors?.['required']">
+        {{label}} must be only alpha numeric
+    </div>
+
+    <!--onlyChar-->
+    <div class="invalid-feedback" *ngIf="getcontrol.errors?.['onlyChar'] && !getcontrol.errors?.['required']">
+        {{label}} must be only characters
+    </div>
+
+    <!--onlyCharWithSpace-->
+    <div class="invalid-feedback" *ngIf="getcontrol.errors?.['onlyCharWithSpace'] && !getcontrol.errors?.['required']">
+        {{label}} must be only characters and space
+    </div>
+
+    <!--minlength-->
+    <div class="invalid-feedback" *ngIf="getcontrol.errors?.['minlength'] && 
+                                        !(getcontrol.errors?.['maxlength'] || getcontrol.errors?.['required'] || getcontrol.errors?.['onlyChar'] || getcontrol.errors?.['onlyCharWithSpace'] || getcontrol.errors?.['onlyAlphaNumeric'])">
+        <!--.requiredLength will pick up the length specified in validators-->
+        <!--{{label}} must be minimum {{getcontrol.errors?.['minlength']['requiredLength']}} characters-->
+        {{label}} must be minimum {{getcontrol.errors?.['minlength'].requiredLength}} characters
+    </div>
+
+    <!--maxlength-->
+    <div class="invalid-feedback" *ngIf="getcontrol.errors?.['maxlength'] && 
+                                        !(getcontrol.errors?.['minlength'] || getcontrol.errors?.['required'] || getcontrol.errors?.['onlyChar'] || getcontrol.errors?.['onlyCharWithSpace'] || getcontrol.errors?.['onlyAlphaNumeric'])">
+        <!--.requiredLength will pick up the length specified in validators-->
+        {{label}} must be maximum {{getcontrol.errors?.['maxlength'].requiredLength}} characters
+    </div>
+
+    <!--password strength-->
+    <div class="invalid-feedback" *ngIf="getcontrol.errors?.['passwordStrength'] && 
+                                        !(getcontrol.errors?.['minlength'] || getcontrol.errors?.['maxlength'] || getcontrol.errors?.['required'] || getcontrol.errors?.['onlyChar'] || getcontrol.errors?.['onlyCharWithSpace'])">
+        {{label}} must have an upper case, lower case, special character, a number and max length 30
+    </div>
+
+    <!--not matching-->
+    <div class="invalid-feedback" *ngIf="getcontrol.errors?.['notMatching'] && !getcontrol.errors?.['required']">
+        {{labelMustMatch}} do not match
+    </div>
+
+    <!--not matching two-->
+    <div class="invalid-feedback" *ngIf="getcontrol.errors?.['notMatchingTwo'] && !getcontrol.errors?.['required']">
+        {{labelMustMatch}} do not match
+    </div>
+
+    <!--userNameAllowed-->
+    <div class="invalid-feedback" *ngIf="getcontrol.errors?.['userNameAllowed'] && 
+                                        !(getcontrol.errors?.['minlength'] || getcontrol.errors?.['maxlength'] || getcontrol.errors?.['required'] || getcontrol.errors?.['onlyChar'] || getcontrol.errors?.['onlyCharWithSpace'])">
+        {{label}} must be alpha numeric with _ and - are allowed. Number cannot be at start and  _ - should be in the middle
+    </div>
+
+    <!--userNameExistAsync-->
+    <div class="invalid-feedback" *ngIf="getcontrol.errors?.['userNameExistAsync'] && 
+                                        !(getcontrol.errors?.['userNameAllowed'] || getcontrol.errors?.['minlength'] || getcontrol.errors?.['maxlength'] || getcontrol.errors?.['required'] || getcontrol.errors?.['onlyChar'] || getcontrol.errors?.['onlyCharWithSpace'])">
+        {{label}} already taken
+    </div>
+</div>

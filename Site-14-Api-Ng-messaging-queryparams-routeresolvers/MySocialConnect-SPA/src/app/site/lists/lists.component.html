@@ -1,0 +1,44 @@
+<div class="text-center mt-3">
+    <h2>{{ userTypeString === zUserLiketype[zUserLiketype.liked] ? "Members I like" : "Members who like me" }}</h2>
+</div>
+
+<div class="container mt-3">
+    <div class="d-flex">
+        <div class="btn-group" name="userLikeType">
+            <button type="button" class="btn btn-small" 
+                [ngClass]="likeParams.userLikeType == zUserLiketype.liked ? 'btn-success' : 'btn-info' "
+                btnRadio="{{ zUserLiketype.liked }}" 
+                [(ngModel)]="likeParams.userLikeType" 
+                (click)="loadLikes()"><i class="fa fa-arrow-circle-o-right" *ngIf="likeParams.userLikeType == zUserLiketype.liked">&nbsp;</i>Members I like</button>
+
+            <button type="button" class="btn btn-small" 
+                [ngClass]="likeParams.userLikeType == zUserLiketype.likedBy ? 'btn-success' : 'btn-info' "
+                btnRadio="{{ zUserLiketype.likedBy }}" 
+                [(ngModel)]="likeParams.userLikeType" 
+                (click)="loadLikes()"><i class="fa fa-arrow-circle-o-right" *ngIf="likeParams.userLikeType == zUserLiketype.likedBy">&nbsp;</i>Members who like me</button>
+        </div>
+    </div>
+
+    <div class="row mt-3" *ngIf="members">
+        <div class="col-2" *ngFor="let member of members">
+            <app-member-card [memberIn]="member"></app-member-card>
+        </div>
+    </div>
+
+</div>
+
+<div class="d-flex justify-content-center" *ngIf="pagination">
+    <pagination
+        [boundaryLinks]="true"
+        [totalItems]="pagination.totalItems"
+        [itemsPerPage]="pagination.itemsPerPage"
+        [(ngModel)]="pagination.currentPage"
+        (pageChanged)="onPageChanged($event)"
+        previousText="&lsaquo;" 
+        nextText="&rsaquo;" 
+        firstText="&laquo;" 
+        lastText="&raquo;"
+        >
+
+    </pagination>
+</div>
