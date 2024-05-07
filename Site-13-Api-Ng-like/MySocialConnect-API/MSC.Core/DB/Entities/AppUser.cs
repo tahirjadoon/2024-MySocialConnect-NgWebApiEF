@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
-using MSC.Core.Extensions;
 
 namespace MSC.Core.DB.Entities;
 
@@ -72,4 +71,15 @@ public class AppUser
         return age;
     }
     */
+
+    /// <summary>
+    /// Other users that liked the logged in User. CheckDB Context for relationships
+    /// </summary>
+    public List<UserLike> LikedByUsers { get; set; }
+
+    /// <summary>
+    /// Users that the logged in user liked. CheckDB Context for relationships
+    /// </summary>
+    public List<UserLike> LikedUsers { get; set; }
+
 }

@@ -78,6 +78,11 @@ export class HelperService {
   public urlAccountLogin: string = `${this.urlAccount}/login`;
   public urlAccountCheckUser: string = `${this.urlAccount}/checkUser/${this.keyName}`;
 
+  //likes
+  private urlLikes: string = `${this.baseUrlServer}likes`;
+  public urlLikeAdd: string = `${this.urlLikes}/${this.keyId}`;
+  public urlLikeGetUsers: string = `${this.urlLikes}/`;
+
   //paths for which the spinner is not needed
   private spinnerNotAllowedUrls: SpinnerNotAllowed[] = [
     new SpinnerNotAllowed(`${this.urlAccount}/checkUser/`, 'Get')

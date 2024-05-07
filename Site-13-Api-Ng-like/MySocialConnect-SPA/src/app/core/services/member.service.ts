@@ -12,10 +12,10 @@ import { AppConstants } from '../constants/app-constants';
 import { UserDto } from '../models-interfaces/user-dto.model';
 import { UserParamsDto } from '../models-interfaces/user-params-dto.model';
 import { LoggedInUserDto } from '../models-interfaces/logged-in-user-dto.model';
+import { LikeParamsDto } from '../models-interfaces/like-params-dto.model';
 import { PaginatedResult } from '../models-interfaces/pagination/paginated-result.model';
 
 import { ZMemberGetBy } from '../enums/z-member-get-by';
-
 
 @Injectable({
   providedIn: 'root'
@@ -267,5 +267,35 @@ export class MemberService {
     this.helperService.logIfFrom(url, "memberService deletePhoto");
     return this.httpClientService.delete(url);
   }
+
+  /**
+   * A add method to add likes
+   * @param id id of the user getting liked 
+   * 
+   * @returns returns Created
+   */
+  addLike(id: number){
+    var url = this.helperService.replaceKeyValue(this.helperService.urlLikeAdd, this.helperService.keyId, id);
+    this.helperService.logIfFrom(url, "memberService addLike");
+    
+    return this.httpClientService.post(url, {});
+  }
+
+  /**
+   * A add method to get likes
+   * 
+   * @returns returns UserDto[]
+   */
+  getLike(likeParams: LikeParamsDto){
+    //add the pagination and filtering params
+    const params = likeParams.getLikeSearchParams();
+    const url = this.helperService.urlLikeGetUsers;
+    this.helperService.logIfFrom(url, "memberService getLike")
+    this.helperService.logIf(params);
+
+    //make the call, the result is not full userDto, has some properties
+    return this.getPaginatedResult<Partial<UserDto[]>>(url, params);
+  }
+
 
 }

@@ -1,5 +1,9 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { UserDto } from 'src/app/core/models-interfaces/user-dto.model';
+import { Subscription } from 'rxjs';
+import { ToastrService } from 'ngx-toastr';
+
+import { UserDto } from '../../../core/models-interfaces/user-dto.model';
+import { MemberService } from '../../../core/services/member.service';
 
 @Component({
   selector: 'app-member-card',
@@ -10,7 +14,9 @@ export class MemberCardComponent implements OnInit, OnDestroy {
 
   @Input() memberIn: UserDto | undefined; // = <UserDto>{};
 
-  constructor(){}
+  addLikeSubscription!: Subscription;
+
+  constructor(private memberService: MemberService, private toastrService: ToastrService){}
 
   ngOnDestroy(): void {
     
@@ -18,6 +24,20 @@ export class MemberCardComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     
+  }
+
+  onAddLike(member: UserDto){
+    this.addLikeSubscription = this.memberService.addLike(member.id).subscribe({
+      next: () => {
+        this.toastrService.success(`You have liked ${member.displayName}`);
+      },
+      error: e => {
+        //no need to do something here since interceptor will display
+      },
+      complete: () => {
+        //no need to do something here since interceptor will display
+      }
+    })
   }
 
 

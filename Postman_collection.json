@@ -1183,6 +1183,169 @@
 						"method": "GET",
 						"header": [],
 						"url": {
+							"raw": "{{url_2024_msc}}/api/users/kevin/name",
+							"host": [
+								"{{url_2024_msc}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"kevin",
+								"name"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Site-12",
+			"item": [
+				{
+					"name": "login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const user = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Has properties\", function () {\r",
+									"    pm.expect(user).to.have.property('userName');\r",
+									"    pm.expect(user).to.have.property('token');\r",
+									"    pm.expect(user).to.have.property('guid');\r",
+									"    pm.expect(user).to.have.property('id');\r",
+									"    pm.expect(user).to.have.property('displayName');\r",
+									"});\r",
+									"\r",
+									"if (pm.test(\"Has properties\")) {\r",
+									"    //pm.globals.set('token_2024_msc', user.token);\r",
+									"    //pm.globals.set('userName_2024_msc', user.userName);\r",
+									"    //pm.globals.set('guid_2024_msc', user.guid);\r",
+									"\r",
+									"    pm.collectionVariables.set('token_2024_msc', user.token);\r",
+									"    pm.collectionVariables.set('userName_2024_msc', user.userName);\r",
+									"    pm.collectionVariables.set('guid_2024_msc', user.guid);\r",
+									"    pm.collectionVariables.set('id_2024_msc', user.id);\r",
+									"    pm.collectionVariables.set('displayName_2024_msc', user.displayName);\r",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"username\": \"blanca\",\r\n\t\"password\": \"Password@1\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url_2024_msc}}/api/account/login",
+							"host": [
+								"{{url_2024_msc}}"
+							],
+							"path": [
+								"api",
+								"account",
+								"login"
+							],
+							"query": [
+								{
+									"key": "username",
+									"value": "jane",
+									"disabled": true
+								},
+								{
+									"key": "password",
+									"value": "password$1",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "users all",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token_2024_msc}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url_2024_msc}}/api/users",
+							"host": [
+								"{{url_2024_msc}}"
+							],
+							"path": [
+								"api",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "users all with Params",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token_2024_msc}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url_2024_msc}}/api/users",
+							"host": [
+								"{{url_2024_msc}}"
+							],
+							"path": [
+								"api",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "user by name",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token_2024_msc}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
 							"raw": "{{url_2024_msc}}/api/users/{{userName_2024_msc}}/name",
 							"host": [
 								"{{url_2024_msc}}"
@@ -1192,6 +1355,349 @@
 								"users",
 								"{{userName_2024_msc}}",
 								"name"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Site-13",
+			"item": [
+				{
+					"name": "login blanca",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const user = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Has properties\", function () {\r",
+									"    pm.expect(user).to.have.property('userName');\r",
+									"    pm.expect(user).to.have.property('token');\r",
+									"    pm.expect(user).to.have.property('guid');\r",
+									"    pm.expect(user).to.have.property('id');\r",
+									"    pm.expect(user).to.have.property('displayName');\r",
+									"});\r",
+									"\r",
+									"if (pm.test(\"Has properties\")) {\r",
+									"    //pm.globals.set('token_2024_msc', user.token);\r",
+									"    //pm.globals.set('userName_2024_msc', user.userName);\r",
+									"    //pm.globals.set('guid_2024_msc', user.guid);\r",
+									"\r",
+									"    pm.collectionVariables.set('token_2024_msc', user.token);\r",
+									"    pm.collectionVariables.set('userName_2024_msc', user.userName);\r",
+									"    pm.collectionVariables.set('guid_2024_msc', user.guid);\r",
+									"    pm.collectionVariables.set('id_2024_msc', user.id);\r",
+									"    pm.collectionVariables.set('displayName_2024_msc', user.displayName);\r",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"username\": \"blanca\",\r\n\t\"password\": \"Password@1\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url_2024_msc}}/api/account/login",
+							"host": [
+								"{{url_2024_msc}}"
+							],
+							"path": [
+								"api",
+								"account",
+								"login"
+							],
+							"query": [
+								{
+									"key": "username",
+									"value": "jane",
+									"disabled": true
+								},
+								{
+									"key": "password",
+									"value": "password$1",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "blanca - like kevin",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token_2024_msc}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{url_2024_msc}}/api/likes/12",
+							"host": [
+								"{{url_2024_msc}}"
+							],
+							"path": [
+								"api",
+								"likes",
+								"12"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "blanca - liked users",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token_2024_msc}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url_2024_msc}}/api/likes?UserLikeType=1",
+							"host": [
+								"{{url_2024_msc}}"
+							],
+							"path": [
+								"api",
+								"likes"
+							],
+							"query": [
+								{
+									"key": "UserLikeType",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "blanca - likedby",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token_2024_msc}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url_2024_msc}}/api/likes?UserLikeType=2",
+							"host": [
+								"{{url_2024_msc}}"
+							],
+							"path": [
+								"api",
+								"likes"
+							],
+							"query": [
+								{
+									"key": "UserLikeType",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "login kevin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const user = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Has properties\", function () {\r",
+									"    pm.expect(user).to.have.property('userName');\r",
+									"    pm.expect(user).to.have.property('token');\r",
+									"    pm.expect(user).to.have.property('guid');\r",
+									"    pm.expect(user).to.have.property('id');\r",
+									"    pm.expect(user).to.have.property('displayName');\r",
+									"});\r",
+									"\r",
+									"if (pm.test(\"Has properties\")) {\r",
+									"    //pm.globals.set('token_2024_msc', user.token);\r",
+									"    //pm.globals.set('userName_2024_msc', user.userName);\r",
+									"    //pm.globals.set('guid_2024_msc', user.guid);\r",
+									"\r",
+									"    pm.collectionVariables.set('token_2024_msc', user.token);\r",
+									"    pm.collectionVariables.set('userName_2024_msc', user.userName);\r",
+									"    pm.collectionVariables.set('guid_2024_msc', user.guid);\r",
+									"    pm.collectionVariables.set('id_2024_msc', user.id);\r",
+									"    pm.collectionVariables.set('displayName_2024_msc', user.displayName);\r",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"username\": \"kevin\",\r\n\t\"password\": \"Password@1\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url_2024_msc}}/api/account/login",
+							"host": [
+								"{{url_2024_msc}}"
+							],
+							"path": [
+								"api",
+								"account",
+								"login"
+							],
+							"query": [
+								{
+									"key": "username",
+									"value": "jane",
+									"disabled": true
+								},
+								{
+									"key": "password",
+									"value": "password$1",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "kevin - like blanca",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token_2024_msc}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{url_2024_msc}}/api/likes/5",
+							"host": [
+								"{{url_2024_msc}}"
+							],
+							"path": [
+								"api",
+								"likes",
+								"5"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "kevin - liked users",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token_2024_msc}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url_2024_msc}}/api/likes?UserLikeType=1",
+							"host": [
+								"{{url_2024_msc}}"
+							],
+							"path": [
+								"api",
+								"likes"
+							],
+							"query": [
+								{
+									"key": "UserLikeType",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "kevin - likedby",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token_2024_msc}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url_2024_msc}}/api/likes?UserLikeType=2",
+							"host": [
+								"{{url_2024_msc}}"
+							],
+							"path": [
+								"api",
+								"likes"
+							],
+							"query": [
+								{
+									"key": "UserLikeType",
+									"value": "2"
+								}
 							]
 						}
 					},
