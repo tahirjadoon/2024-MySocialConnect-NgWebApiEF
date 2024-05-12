@@ -1,0 +1,26 @@
+<div class="container mt-5">
+    <h1><span class="title">{{title}}</span> Home</h1>
+</div>
+
+<div *ngIf="!(accountService.currentLoggedInUser$ | async)" class="container mt-5">
+    <div *ngIf="!registerMode" style="text-align: center">
+        <h3>Find your <span class="title">{{title}}</span> matches!</h3>
+        <p class="lead">Come on in to see who you know or want to connect with... all you need to do is sign up!</p>
+        
+        <div class="text-center">
+            <button class="btn btn-primary btn-lg me-2" (click)="onRegisterToggle()">Register</button>&nbsp;
+            <button class="btn btn-info btn-lg">Learn More</button>
+        </div>
+
+    </div>
+
+    <div *ngIf="registerMode" class="conatiner">
+        <div class="row justify-content-center">
+            <div class="col-4">
+                <!--<app-register (cancelRegister)="onCancelRegisterMode($event)"></app-register>-->
+                <!--<app-register-reactiveform (cancelRegister)="onCancelRegisterMode($event)"></app-register-reactiveform>-->
+                <app-register-reactiveform-reusablecontrols (cancelRegister)="onCancelRegisterMode($event)"></app-register-reactiveform-reusablecontrols>
+            </div>
+        </div>
+    </div>
+</div>
