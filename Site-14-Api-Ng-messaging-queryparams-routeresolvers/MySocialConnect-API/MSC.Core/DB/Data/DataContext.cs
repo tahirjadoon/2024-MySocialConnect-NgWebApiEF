@@ -16,6 +16,10 @@ public class DataContext : DbContext
     //creating the db set so that we can directly query
     public DbSet<UserLike> Likes { get; set; }
 
+    //table name will be created as "Messages"
+    //creating the db set so that we can directly query
+    public DbSet<UserMessage> Messages {get; set;}
+
     //override OnModelCreating to create the relationshops for the likes
     //give entities some configuration
     protected override void OnModelCreating(ModelBuilder builder)
@@ -23,6 +27,7 @@ public class DataContext : DbContext
         base.OnModelCreating(builder);
 
         UserLikeSetup(builder);
+        UserMessageSetup(builder);
     }
 
     //user like configuration
@@ -48,6 +53,31 @@ public class DataContext : DbContext
             .HasForeignKey(t => t.TargetUserId) 
             //for sql server the same entity cannot have to cascades so one needs to DeleteBehavior.NoAction 
             .OnDelete(DeleteBehavior.Cascade) //when the user is deleted then delete the related entities
+        ;
+    }
+
+    private void UserMessageSetup(ModelBuilder builder)
+    {
+        //primary key is by convention so no need to create
+        builder.Entity<UserMessage>()
+            .HasIndex(t => t.Guid);
+
+        //receiver
+        //for sql server the same entity cannot have to cascades so one needs to DeleteBehavior.NoAction 
+        builder.Entity<UserMessage>()
+            .HasOne(r => r.Recipient)
+            .WithMany(m => m.MessagesReceived)
+            .HasForeignKey(t => t.RecipientId)
+            .OnDelete(DeleteBehavior.Cascade)
+        ;
+
+        //sender
+        //for sql server the same entity cannot have to cascades so one needs to DeleteBehavior.NoAction 
+        builder.Entity<UserMessage>()
+            .HasOne(s => s.Sender)
+            .WithMany(m => m.MessagesSent)
+            .HasForeignKey(s => s.SenderId)
+            .OnDelete(DeleteBehavior.Cascade)
         ;
     }
 }

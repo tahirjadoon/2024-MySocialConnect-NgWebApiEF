@@ -15,6 +15,8 @@ import { NotLoggedInComponent } from './site/errors/not-logged-in/not-logged-in.
 import { authGuard } from './core/guards/auth.guard';
 import { preventUnsavedChangesGuard } from './core/guards/prevent-unsaved-changes.guard';
 
+import { memberDetailResolver } from './core/resolvers/member-detail.resolver';
+
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -25,7 +27,8 @@ const routes: Routes = [
     canActivate: [authGuard], 
     children: [
       { path: 'members', component: MemberListComponent },
-      { path: 'members/detail/:guid/:name', component: MemberDetailComponent },
+      //resolver used, property member will get the data so use 'member' in member-detail page
+      { path: 'members/detail/:guid/:name', component: MemberDetailComponent, resolve: {member: memberDetailResolver} },
       { path: 'members/edit', component: MemberEditComponent, canDeactivate: [preventUnsavedChangesGuard] },
       { path: 'lists', component: ListsComponent },
       { path: 'messages', component: MessagesComponent },

@@ -16,6 +16,7 @@ public class AutoMapperProfiles : Profile
         Map_AppUser_To_LoggedInUserDto();
         Map_UserRegisterDto_To_AppUser();
         Map_MemberUpdateDto_To_AppUser();
+        Map_Message_to_MessageDto();
     }
 
     #region Mappers start
@@ -55,6 +56,16 @@ public class AutoMapperProfiles : Profile
     private void Map_MemberUpdateDto_To_AppUser()
     {
         CreateMap<MemberUpdateDto, AppUser>();
+    }
+
+    private void Map_Message_to_MessageDto()
+    {
+        CreateMap<UserMessage, MessageDto>()
+        .ForMember(dest => dest.SenderPhotoUrl, opt => opt.MapFrom(src => PickMainUrl(src.Sender.Photos)))
+        .ForMember(dest => dest.SenderGuid, opt => opt.MapFrom(src => src.Sender.Guid))
+        .ForMember(dest => dest.RecipientPhotoUrl, opt => opt.MapFrom(src => PickMainUrl(src.Recipient.Photos)))
+        .ForMember(dest => dest.RecipientGuid, opt => opt.MapFrom(src => src.Recipient.Guid))
+        ;
     }
 
     #endregion Mappers end

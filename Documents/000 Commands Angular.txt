@@ -78,11 +78,67 @@ RXJS
 			.subscribe((survey: any) => {
 			  // update the form controls
 			});
+			
+params
+	route
+		this.guidParam = this.activatedRoute.snapshot.paramMap.get('guid');
+		this.nameParam = this.activatedRoute.snapshot.paramMap.get("name");
+		
+		or 
+		
+		  this.paramSubscription = this.activatedRoute.params.subscribe(params => {
+			  this.guid = params['guid']; 
+			  this.name = params['name'];
+			});
+			
+	query params 
+		  this.queryParamSubscription = this.route.queryParams.subscribe({
+			  next: params => {
+				const tab: number = +params['tab'];
+				const abc: stirng = params['abc']
+			  }, 
+			  error: e => { },
+			  complete: () => {}
+			});
+			
+Resolver
+	when need the resource before the componenet is created 
+	> ng g r /core/resolvers/memberDetail --skip-tests
+		import { inject } from '@angular/core';
+		import { ResolveFn } from '@angular/router';
+
+		import { UserDto } from '../models-interfaces/user-dto.model';
+		import { MemberService } from '../services/member.service';
+
+		export const memberDetailResolver: ResolveFn<UserDto> = (route, state) => {
+		  const memberService = inject(MemberService);
+
+		  const guid = route.paramMap.get('guid');
+		  const name = route.paramMap.get('name'); 
+		  return memberService.getMemberByGuid(guid!);
+		};
+		
+		add it to the route in app-routing module
+		
+		this was done due to tab selection not happening - site-14... code. 
+		
+		alternate approach
+		
+		@ViewChild('nav') set setNgbNav(nav: NgbNav | undefined) {
+			if (!nav) return;
+			this.ngbNav = nav;
+			const tab = this.route.snapshot.queryParamMap.get('tab');
+			if (!tab) return;
+			this.ngbNav.select(+tab);
+		  }
+		
 	
 @ViewChild: to work with the element inside the html from component  
 	@ViewChild('username', { static: false }) userNameElement!: ElementRef;
 	
 	this.userNameElement.nativeElement.focus();
+	
+	
 	
 @Output
 	@Output('cancelRegister') cancelRegister = new EventEmitter();
@@ -124,3 +180,7 @@ Reactive form
 	
 Template driven form 
 	<form #registerForm="ngForm" (ngSubmit)="onRegister()" autocomplete="off" [appMustMatch]="['password','confirmpassword']">
+	
+RouterLink and QueryParams
+	routerLink='{{ getMemberDetailLink(message) }}' [queryParams]="{tab: 3}" 
+ 

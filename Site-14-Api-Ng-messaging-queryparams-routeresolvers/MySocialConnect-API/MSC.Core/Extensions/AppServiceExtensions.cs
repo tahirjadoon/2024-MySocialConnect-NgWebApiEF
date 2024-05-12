@@ -42,6 +42,8 @@ public static class AppServiceExtensions
         services.AddScoped<IUserBusinessLogic, UserBusinessLogic>();
         services.AddScoped<ILikesRepository, LikesRepository>();
         services.AddScoped<ILikesBusinessLogic, LikesBusinessLogic>();
+        services.AddScoped<IMessageRepository, MessageRepository>();
+        services.AddScoped<IMessageBusinessLogic, MessageBusinessLogic>();
         services.AddScoped<ITokenService, TokenService>();
         services.AddScoped<IPhotoService, PhotoService>();
         //services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies()); //when have single project/assembly

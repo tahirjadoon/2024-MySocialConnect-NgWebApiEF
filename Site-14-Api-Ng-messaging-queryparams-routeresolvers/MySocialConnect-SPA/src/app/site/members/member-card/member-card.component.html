@@ -10,7 +10,9 @@
                 <button class="btn btn-primary" (click)="onAddLike(memberIn)"><i class="fa fa-thumbs-up"></i></button>
             </li>
             <li class="list-inline-item">
-                <button class="btn btn-primary"><i class="fa fa-envelope"></i></button>
+                <button class="btn btn-primary" 
+                    routerLink='/members/detail/{{memberIn.guId}}/{{memberIn.displayName}}' 
+                    [queryParams]="{tab: 'messages'}"><i class="fa fa-envelope"></i></button>
             </li>
         </ul>
     </div>

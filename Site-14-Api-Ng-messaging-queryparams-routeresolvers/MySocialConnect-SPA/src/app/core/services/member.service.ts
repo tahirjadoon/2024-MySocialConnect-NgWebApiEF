@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
-import { HttpHeaders, HttpParams } from '@angular/common/http';
+import { HttpHeaders } from '@angular/common/http';
 import { Observable, map, of, take } from 'rxjs';
 
 import { LocalStorageService } from './local-storage.service';
 import { HelperService } from './helper.service';
 import { HttpClientService } from './http-client.service';
 import { AccountService } from './account.service';
+import { PageService } from './page.service';
 
 import { AppConstants } from '../constants/app-constants';
 
@@ -13,7 +14,6 @@ import { UserDto } from '../models-interfaces/user-dto.model';
 import { UserParamsDto } from '../models-interfaces/user-params-dto.model';
 import { LoggedInUserDto } from '../models-interfaces/logged-in-user-dto.model';
 import { LikeParamsDto } from '../models-interfaces/like-params-dto.model';
-import { PaginatedResult } from '../models-interfaces/pagination/paginated-result.model';
 
 import { ZMemberGetBy } from '../enums/z-member-get-by';
 
@@ -40,7 +40,8 @@ export class MemberService {
   constructor(private localStorageService: LocalStorageService, 
             private helperService: HelperService, 
             private httpClientService: HttpClientService, 
-            private accountService: AccountService) { 
+            private accountService: AccountService, 
+            private pageService: PageService) { 
 
     //to pass the auth token to the api, later will use interceptor
     this.httpOptions = {
@@ -132,7 +133,7 @@ export class MemberService {
     //url
     const url = this.helperService.urlUsersAll;
     //make the call
-    return this.getPaginatedResult<UserDto[]>(url, params).pipe(
+    return this.pageService.getPaginatedResult<UserDto[]>(url, params).pipe(
       map(response=> {
         //add the members to the cache
         this.memberCache.set(key, response)
@@ -140,25 +141,6 @@ export class MemberService {
       })
     );
     
-  }
-
-  private getPaginatedResult<T>(url: string, params: HttpParams){
-    this.helperService.logIfFrom(url, "MemberService getPaginatedResult Request");
-    this.helperService.logIf(params);
-    const paginatedResult: PaginatedResult<T> = new PaginatedResult<T>();
-    return this.httpClientService.getWithFullResponse<T>(url, params).pipe(
-      map(response => {
-        //result - members list
-        if(response.body)
-          paginatedResult.result = response.body;
-        //pagination infor from the header
-        const header = response.headers.get(AppConstants.PaginationHeader);
-        if(header != null)
-          paginatedResult.pagination = JSON.parse(header)
-        this.helperService.logIfFrom(paginatedResult, "MemberService getPaginatedResult");
-        return paginatedResult;
-      })
-    );
   }
 
   /**
@@ -294,7 +276,7 @@ export class MemberService {
     this.helperService.logIf(params);
 
     //make the call, the result is not full userDto, has some properties
-    return this.getPaginatedResult<Partial<UserDto[]>>(url, params);
+    return this.pageService.getPaginatedResult<Partial<UserDto[]>>(url, params);
   }
 
 

@@ -83,6 +83,13 @@ export class HelperService {
   public urlLikeAdd: string = `${this.urlLikes}/${this.keyId}`;
   public urlLikeGetUsers: string = `${this.urlLikes}/`;
 
+  //messages
+  private urlMessages: string = `${this.baseUrlServer}message`;
+  public urlMessageCreate: string = `${this.urlMessages}/create`;
+  public urlMessageGetForUser: string = `${this.urlMessages}/user/get/messages`;
+  public urlMessageGetThread: string = `${this.urlMessages}/thread/${this.keyId}`;  //recipientId
+  public urlMessageDelete: string = `${this.urlMessages}/delete/${this.keyGuid}`; //message guid
+
   //paths for which the spinner is not needed
   private spinnerNotAllowedUrls: SpinnerNotAllowed[] = [
     new SpinnerNotAllowed(`${this.urlAccount}/checkUser/`, 'Get')

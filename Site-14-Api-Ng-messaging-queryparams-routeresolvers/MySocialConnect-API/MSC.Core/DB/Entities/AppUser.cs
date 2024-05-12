@@ -82,4 +82,8 @@ public class AppUser
     /// </summary>
     public List<UserLike> LikedUsers { get; set; }
 
+    //for messages, check DB Context
+    public List<UserMessage> MessagesSent { get; set; }
+    public List<UserMessage> MessagesReceived { get; set; }
+
 }
