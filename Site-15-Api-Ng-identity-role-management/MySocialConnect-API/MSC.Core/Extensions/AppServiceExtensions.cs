@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,6 +11,7 @@ using MSC.Core.ActionFilters;
 using MSC.Core.BusinessLogic;
 using MSC.Core.Constants;
 using MSC.Core.DB.Data;
+using MSC.Core.DB.Entities;
 using MSC.Core.Helper;
 using MSC.Core.Mappers;
 using MSC.Core.Repositories;
@@ -88,6 +90,28 @@ public static class AppServiceExtensions
 
     public static IServiceCollection AddAuthenticationService(this IServiceCollection services, IConfiguration config)
     {
+        //IR_REFACTOR - Identity, out it before services.AddAuthentication
+        //for mvc use services.AddIdentity. For the api we can't do that
+        services.AddIdentityCore<AppUser>(opt => {
+            //there are a lot of options that we can configure here
+            //pick per the site password scheme 
+            opt.Password.RequireNonAlphanumeric = false;
+            opt.Password.RequireDigit = false;
+            opt.Password.RequireLowercase = false;
+            opt.Password.RequireUppercase = false;
+        })
+        //roles
+        .AddRoles<AppRole>()
+        //role manager
+        .AddRoleManager<RoleManager<AppRole>>()
+        //signin manager
+        //.AddSignInManager<SignInManager<AppUser>>()
+        //role validator
+        //.AddRoleValidator<RoleValidator<AppRole>>()
+        //and finally add store to create all the identity related tables 
+        .AddEntityFrameworkStores<DataContext>()
+        ;
+
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         .AddJwtBearer(options => {
             options.TokenValidationParameters = new TokenValidationParameters
@@ -98,6 +122,15 @@ public static class AppServiceExtensions
                 ValidateAudience = false
             };
         });
+
+        services.AddAuthorization(opt => {
+            opt.AddPolicy(SiteIdentityConstants.AuthPolicy_Admin, 
+                            policy => policy.RequireRole(SiteIdentityConstants.Role_Admin));
+
+            opt.AddPolicy(SiteIdentityConstants.AuthPolicy_Moderator_Photos, 
+                            policy => policy.RequireRole(SiteIdentityConstants.Role_Admin, SiteIdentityConstants.Role_Moderator));
+        });
+
         return services;
     }
 }

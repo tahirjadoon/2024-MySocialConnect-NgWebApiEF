@@ -10,6 +10,8 @@ import { AccountService } from '../../core/services/account.service';
 import { LoginDto } from '../../core/models-interfaces/login-dto.model';
 import { LoggedInUserDto } from '../../core/models-interfaces/logged-in-user-dto.model';
 
+import { ZRoles } from '../../core/enums/z-roles';
+
 
 @Component({
   selector: 'app-nav',
@@ -27,6 +29,9 @@ export class NavComponent implements OnInit, AfterViewInit, OnDestroy {
   loggedInUser: LoggedInUserDto | null = <LoggedInUserDto>{};
   loginDto: LoginDto = <LoginDto>{};
   returnUrl: string = "";
+
+  //to be used with appIsInRole directive on admin link. The link will be hidden
+  zRole = ZRoles;
 
   //subscriptions
   loginSubscription!: Subscription;

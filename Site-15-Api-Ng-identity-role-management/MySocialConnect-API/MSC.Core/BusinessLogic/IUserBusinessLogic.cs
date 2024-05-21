@@ -45,4 +45,8 @@ public interface IUserBusinessLogic
     Task<bool> SetPhotoMainAsync(int photoId, UserClaimGetDto claims);
 
     Task LogUserActivityAsync(int id);
+
+    //from admin controller after IR_REFACTOR
+    Task<IEnumerable<object>> GetUSersWithRoles();
+    Task<BusinessResponse> EditRolesForUser(int adminUSerId, Guid userToUpdate, IEnumerable<string> roles);
 }

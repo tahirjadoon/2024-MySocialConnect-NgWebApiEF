@@ -16,6 +16,8 @@ import { authGuard } from './core/guards/auth.guard';
 import { preventUnsavedChangesGuard } from './core/guards/prevent-unsaved-changes.guard';
 
 import { memberDetailResolver } from './core/resolvers/member-detail.resolver';
+import { AdminPanelComponent } from './site/admin/admin-panel/admin-panel.component';
+import { adminGuard } from './core/guards/admin.guard';
 
 
 const routes: Routes = [
@@ -32,6 +34,7 @@ const routes: Routes = [
       { path: 'members/edit', component: MemberEditComponent, canDeactivate: [preventUnsavedChangesGuard] },
       { path: 'lists', component: ListsComponent },
       { path: 'messages', component: MessagesComponent },
+      { path: 'admin', component: AdminPanelComponent, canActivate: [adminGuard] },
     ]
   },
   { path: 'errors/sample', component: SampleComponent},

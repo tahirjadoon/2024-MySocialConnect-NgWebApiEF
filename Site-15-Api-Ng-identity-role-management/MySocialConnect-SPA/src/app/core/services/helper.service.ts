@@ -90,6 +90,12 @@ export class HelperService {
   public urlMessageGetThread: string = `${this.urlMessages}/thread/${this.keyId}`;  //recipientId
   public urlMessageDelete: string = `${this.urlMessages}/delete/${this.keyGuid}`; //message guid
 
+  //admin 
+  private urlAdmin: string = `${this.baseUrlServer}admin`;
+  public urlAdminGetUsersWithRoles: string = `${this.urlAdmin}/users-with-roles`;
+  public urlAdminGetPhotosToModerate: string = `${this.urlAdmin}/photos-to-moderate`;
+  public urlAdminEditRoles: string = `${this.urlAdmin}/edit-roles/${this.keyGuid}`;
+
   //paths for which the spinner is not needed
   private spinnerNotAllowedUrls: SpinnerNotAllowed[] = [
     new SpinnerNotAllowed(`${this.urlAccount}/checkUser/`, 'Get')

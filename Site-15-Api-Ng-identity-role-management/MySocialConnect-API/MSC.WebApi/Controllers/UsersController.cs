@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -7,7 +6,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MSC.Core.BusinessLogic;
-using MSC.Core.DB.Entities;
 using MSC.Core.Dtos;
 using MSC.Core.Dtos.Pagination;
 using MSC.Core.Extensions;

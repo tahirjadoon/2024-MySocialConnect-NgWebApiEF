@@ -21,7 +21,8 @@ public static class ManualMapperExtensions
         loggedInUser.DisplayName = user.DisplayName;
         loggedInUser.Gender = user.Gender;
         loggedInUser.MainPhotoUrl = user.Photos.ManualGetMainPhotoUrl();
-        loggedInUser.Token = tokenService.CreateToken(user);
+        //IR_REFACTOR :  CreateToken is async call now so commented it. Not used any more
+        //loggedInUser.Token = tokenService.CreateToken(user);
 
         return loggedInUser;
     }

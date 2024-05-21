@@ -6,6 +6,9 @@ using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using MSC.Core.Constants;
 using MSC.Core.DB.Entities;
 using MSC.Core.Dtos;
 using MSC.Core.Dtos.Pagination;
@@ -19,13 +22,19 @@ namespace MSC.Core.BusinessLogic;
 
 public class UserBusinessLogic : IUserBusinessLogic
 {
+    private readonly UserManager<AppUser> _userManager;
+    private readonly RoleManager<AppRole> _roleManager;
     private readonly IUserRepository _userRepo;
     private readonly ITokenService _tokenService;
     private readonly IMapper _mapper;
     private readonly IPhotoService _photoService;
 
-    public UserBusinessLogic(IUserRepository userRepo, ITokenService tokenService, IMapper mapper, IPhotoService photoService)
+    public UserBusinessLogic(UserManager<AppUser> userManager, RoleManager<AppRole> roleManager, 
+                            IUserRepository userRepo, ITokenService tokenService, IMapper mapper, 
+                            IPhotoService photoService)
     {
+        _userManager = userManager;
+        _roleManager = roleManager;
         _userRepo = userRepo;
         _tokenService = tokenService;
         _mapper = mapper;
@@ -55,8 +64,6 @@ public class UserBusinessLogic : IUserBusinessLogic
         if(users == null || !users.Any()) return null;
         return users;
     }
-
-
     public async Task<AppUser> GetUserRawAsync(string userName)
     {
         if(string.IsNullOrWhiteSpace(userName)) 
@@ -139,7 +146,9 @@ public class UserBusinessLogic : IUserBusinessLogic
         if(string.IsNullOrWhiteSpace(userName)) 
             throw new ValidationException("User name missing");
 
-        return await _userRepo.UserExists(userName);
+        //IR_REFACTOR : use the user manager
+        //return await _userRepo.UserExists(userName);
+        return await _userManager.Users.AnyAsync(x => x.UserName.ToLower() == userName.ToLower());
     }
 
     public async Task<LoggedInUserDto> RegisterUserAsync(UserRegisterDto registerUser)
@@ -154,31 +163,46 @@ public class UserBusinessLogic : IUserBusinessLogic
         if(await UserExists(registerUser.UserName))
             throw new ValidationException("Username already taken");
 
+        //IR_REFACTOR
+        /*
         //hash the password, it will give back hash and salt key
         var hashSalt = registerUser.Password.ComputeHashHmacSha512();
         if(hashSalt == null)
             throw new ValidationException("Unable to handle provided password");
-        
+        */
+
         //create app user to save
         /*
         var appUser = new AppUser();
         appUser.UserName = registerUser.UserName.ToLower();
         */
         var appUser = _mapper.Map<AppUser>(registerUser);
-        appUser.PasswordHash = hashSalt.Hash;
-        appUser.PasswordSalt = hashSalt.Salt;
+        ////IR_REFATCOR: removed these properties
+        //appUser.PasswordHash = hashSalt.Hash;
+        //appUser.PasswordSalt = hashSalt.Salt;
 
+        //IR_REFACTOR
+        /*
         var isRegister = await _userRepo.RegisterUserAsync(appUser);
         if(!isRegister)
             throw new DataFailException("User not registerd");
+        */
+        var result = await _userManager.CreateAsync(appUser, registerUser.Password);
+        if(!result.Succeeded)
+            throw new DataFailException(string.Join(", ", result.Errors));
 
+        //add the user to the member role
+        var roleResult = await _userManager.AddToRoleAsync(appUser, SiteIdentityConstants.Role_Member);
+        if(!roleResult.Succeeded)
+            throw new DataFailException(roleResult.Errors.ToString());        
+        
         var returnUser = await _userRepo.GetUserRawAsync(registerUser.UserName, includePhotos: true);
         if(returnUser == null)
             throw new DataFailException("Something went wrong. No user found!");
 
         //var loggedInUser = returnUser.ManualMapToLoggedInUserDto(_tokenService);;
         var loggedInUser = _mapper.Map<LoggedInUserDto>(returnUser);
-        loggedInUser.Token = _tokenService.CreateToken(returnUser);
+        loggedInUser.Token = await _tokenService.CreateToken(returnUser);
         return loggedInUser;
     }
 
@@ -186,12 +210,22 @@ public class UserBusinessLogic : IUserBusinessLogic
     {
         if (login == null)
             throw new ValidationException("Login info missing");
+        
+        //IR_REFATCOR:
+        //var user = await _userRepo.GetUserRawAsync(login.UserName, includePhotos: true);
+        var user = await _userManager.Users
+                                    .Include(p => p.Photos)
+                                    .SingleOrDefaultAsync(x => x.UserName == login.UserName.ToLower());
 
-        var user = await _userRepo.GetUserRawAsync(login.UserName, includePhotos: true);
-        if (user == null || user.PasswordSalt == null || user.PasswordHash == null)
+        ////IR_REFATCOR: removed these properties
+        //if (user == null || user.PasswordSalt == null || user.PasswordHash == null)
+        //    throw new UnauthorizedAccessException("Either username or password is wrong");
+        if(user == null)
             throw new UnauthorizedAccessException("Either username or password is wrong");
 
-         //password is hashed in db. Hash login password and check against the DB one
+        //password is hashed in db. Hash login password and check against the DB one
+        ////IR_REFATCOR: removed these properties
+        /*
         var hashKeyLogin = login.Password.ComputeHashHmacSha512(user.PasswordSalt);
         if (hashKeyLogin == null)
             throw new UnauthorizedAccessException("Either username or password is wrong");
@@ -199,11 +233,14 @@ public class UserBusinessLogic : IUserBusinessLogic
         //both are byte[]
         if (!hashKeyLogin.Hash.AreEqual(user.PasswordHash))
             throw new UnauthorizedAccessException("Either username or password is wrong");
-
+        */
+        var result = await _userManager.CheckPasswordAsync(user, login.Password);        
+        if (!result)
+            throw new UnauthorizedAccessException("Either username or password is wrong");
         //mapping via manual user mapper
         //var loggedInUser = user.ManualMapToLoggedInUserDto(_tokenService);
         var loggedInUser = _mapper.Map<LoggedInUserDto>(user);
-        loggedInUser.Token = _tokenService.CreateToken(user);
+        loggedInUser.Token = await _tokenService.CreateToken(user);
         return loggedInUser;
     }
 
@@ -349,4 +386,67 @@ public class UserBusinessLogic : IUserBusinessLogic
     }
 
     #endregion Updates
+
+    #region Roles and Moderation
+
+    public async Task<IEnumerable<object>> GetUSersWithRoles()
+    {
+        //get the users, include UserRoles and then Role
+        //return an annonamous object
+        //exclude admin user
+        var users = await _userManager.Users 
+                        //.Include(r => r.UserRoles)
+                        //.ThenInclude(r => r.Role)
+                        //.Where(u => u.UserName.ToLower() != "admin")
+                        .OrderBy(u => u.DisplayName)
+                        .Select(u => new {
+                            u.Id,
+                            UserName = u.UserName,
+                            DisplayName = u.DisplayName, 
+                            GuId = u.Guid, 
+                            Roles = u.UserRoles.Select(r => r.Role.Name).OrderBy(x => x).ToList()
+                        })
+                        .ToListAsync();
+        return users;
+    }
+
+    public async Task<BusinessResponse> EditRolesForUser(int adminUSerId, Guid userToUpdate, IEnumerable<string> roles)
+    {
+        //check user
+        var user = await _userManager.Users.SingleOrDefaultAsync(x => x.Guid == userToUpdate);
+        if(user == null)
+            return new BusinessResponse(HttpStatusCode.NotFound, "User not found to update");
+        
+        //check roles to update
+        if(roles == null || !roles.Any())
+            return new BusinessResponse(HttpStatusCode.BadRequest, "No roles passed to update");
+
+        //get the site roles 
+        var siteRoles = await _roleManager.Roles.Select(r => r.Name).ToListAsync();
+
+        //check roles to update are in siteRoles
+        var notInSiteRoles = roles.Where(x => !siteRoles.Any(y => y == x)).ToList();
+        if(notInSiteRoles != null && notInSiteRoles.Any())
+            return new BusinessResponse(HttpStatusCode.BadRequest, $"Passed role(s) not in list {string.Join(",", notInSiteRoles)}");
+
+        //current user roles
+        var userRoles = await _userManager.GetRolesAsync(user);
+
+        //add the new roles only that do not below to user currently 
+        var resultAdd = await _userManager.AddToRolesAsync(user, roles.Except(userRoles));        
+        if(!resultAdd.Succeeded)
+            return new BusinessResponse(HttpStatusCode.BadRequest, "Failed to add the roles");
+
+        //remove the roles as since the user may have removed some. Above is oly adding new ones
+        var removeResult = await _userManager.RemoveFromRolesAsync(user, userRoles.Except(roles));
+        if(!removeResult.Succeeded)
+            return new BusinessResponse(HttpStatusCode.BadRequest, "Failed to remove roles");
+
+        //pick new roles 
+        var currentRoles = await _userManager.GetRolesAsync(user);
+
+        return new BusinessResponse(HttpStatusCode.OK, "Roles updates successfully!", currentRoles);
+    }
+
+    #endregion Roles and Moderation
 }

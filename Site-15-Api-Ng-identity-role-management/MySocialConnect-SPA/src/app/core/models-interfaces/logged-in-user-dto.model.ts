@@ -6,4 +6,5 @@ export interface LoggedInUserDto {
     displayName: string;
     mainPhotoUrl: string;
     gender: string;
+    roles: string[]
 }

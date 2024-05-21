@@ -1,16 +1,39 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using MSC.Core.DB.Entities;
 
 namespace MSC.Core.DB.Data;
 
-public class DataContext : DbContext
+/*
+don't foget to add migrations
+dotnet ef migrations add MessageEntityAdded -o Core/DB/Migrations (first time)
+dotnet ef migrations add MessageEntityAdded (after wards)
+and then either issue command "dotnet ef database update"
+or do dontnet run. For this check program.cs "CUSTOM: Seed Data Start" section
+*/
+
+//IR_REFATCOR
+//public class DataContext : DbContext
+public class DataContext : IdentityDbContext<AppUser, //class we created
+                                            AppRole, //class we created
+                                            int, //type int as that is what we defined AppUser, AppRole
+                                            IdentityUserClaim<int>, 
+                                            AppUserRole, //class we created
+                                            IdentityUserLogin<int>,
+                                            IdentityRoleClaim<int>, 
+                                            IdentityUserToken<int>
+                                            >
 {
     public DataContext(DbContextOptions options) : base(options)
     {
     }
 
+    //IR_REFATCOR
+    /*
     //Photos will be pulled with the user so no need to put here. Check Photo entity for details
     public DbSet<AppUser> Users { get; set; } 
+    */
 
     //table name will be created as "Likes"
     //creating the db set so that we can directly query
@@ -26,8 +49,29 @@ public class DataContext : DbContext
     {
         base.OnModelCreating(builder);
 
+        //IR_REFATCOR Due to use of Identity
+        CreateUserRole(builder);
+
         UserLikeSetup(builder);
         UserMessageSetup(builder);
+    }
+
+    //IR_REFATCOR Many to Many relationship
+    private void CreateUserRole(ModelBuilder builder)
+    {
+        builder.Entity<AppUser>()
+                    .HasMany(ur => ur.UserRoles)
+                    .WithOne(u => u.User) //Property in AppUserRole
+                    .HasForeignKey(ur => ur.UserId)
+                    .IsRequired()
+            ;
+
+        builder.Entity<AppRole>()
+                .HasMany(ur => ur.UserRoles)
+                .WithOne(u => u.Role) //Property in AppUserRole
+                .HasForeignKey(ur => ur.RoleId)
+                .IsRequired()
+        ;
     }
 
     //user like configuration

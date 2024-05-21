@@ -83,6 +83,17 @@ export class AccountService {
   }
 
   setAndFireCurrentUser(user: LoggedInUserDto){
+    //pick roles from the token, for this need to decode the token. 
+    //keep in mind users may only have single role as string or a string array of roles
+    user.roles = [];
+    const roles = this.getDecodedToken(user.token)?.role;
+    if(roles){
+      if(Array.isArray(roles))
+        user.roles = roles;
+      else 
+        user.roles.push(roles);
+    }
+    
     this.localStorageService.setUser(user);
     this.fireCurrentUser(user);
   }
@@ -96,4 +107,14 @@ export class AccountService {
     this.fireCurrentUser(user);
   }
 
+  getDecodedToken(token: string) :any {
+    //token is not encypted, the signature is.
+    //get the user roles from the token
+    //The atob() method decodes a string that has been encoded by the btoa() method
+    //token comes in three parts seperated by the . It is Header, Payload and signature
+    //interested in the middle part
+    var parsedToken = token.split(".")[1];
+    var decoded = JSON.parse(atob(parsedToken));
+    return decoded;
+  }
 }

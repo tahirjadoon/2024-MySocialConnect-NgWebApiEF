@@ -17,4 +17,5 @@ export interface UserDto {
     lastActive: Date;
     createdOn: Date;
     updatedOn: Date;
+    roles: string[]; //adminService.getUsersWithRoles
 }

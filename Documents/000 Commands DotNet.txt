@@ -55,7 +55,10 @@ Commands
 	•	dotnet new gitignore 
 	
 dotnet EF commands 
-	dotnet ef migrations add
+	dotnet ef migrations add MessageEntityAdded -o Core/DB/Migrations (first time)
+	dotnet ef migrations add MessageEntityAdded (after wards)
+	and then either do "dotbet run" or "dotnet ef database update"
+	
 	dotnet ef migrations list
 	dotnet ef migrations script
 	dotnet ef dbcontext info

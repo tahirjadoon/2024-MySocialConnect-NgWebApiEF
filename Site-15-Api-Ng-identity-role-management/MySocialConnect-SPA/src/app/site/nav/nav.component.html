@@ -15,6 +15,9 @@
             <li class="nav-item"><a class="nav-link" routerLink="/members" routerLinkActive="active">Members </a></li>
             <li class="nav-item"><a class="nav-link" routerLink="/lists" routerLinkActive="active">Lists</a></li>
             <li class="nav-item"><a class="nav-link" routerLink="/messages" routerLinkActive="active">Messages</a></li>
+            <li class="nav-item" *appIsInRole="[zRole.Admin, zRole.Moderator]">
+              <a class="nav-link" routerLink="/admin" routerLinkActive="active">Admin</a>
+            </li>
           </ng-container>
           <li class="nav-item"><a class="nav-link" routerLink="/errors/sample" routerLinkActive="active">Sample</a></li>
         </ul>

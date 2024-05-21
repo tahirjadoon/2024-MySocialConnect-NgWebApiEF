@@ -12,6 +12,7 @@ import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { PaginationModule } from 'ngx-bootstrap/pagination';
 import { ButtonsModule } from 'ngx-bootstrap/buttons';
 import { TimeagoModule } from 'ngx-timeago';
+import { ModalModule } from 'ngx-bootstrap/modal';
 
 //app routing module
 import { AppRoutingModule } from '../../app-routing.module';
@@ -42,8 +43,13 @@ import { DisplayFgerrorsComponent } from '../../site/errors/display-fgerrors/dis
 
 import { TextInputComponent } from '../../site/formControls/text-input/text-input.component';
 import { DateInputComponent } from '../../site/formControls/date-input/date-input.component';
+import { AdminPanelComponent } from '../../site/admin/admin-panel/admin-panel.component';
+import { UserManagementComponent } from '../../site/admin/user-management/user-management.component';
+import { PhotoManagementComponent } from '../../site/admin/photo-management/photo-management.component';
 
-
+//directive for limiting the admin link
+import { IsInRoleDirective } from '../directives/is-in-role.directive';
+import { RolesModalComponent } from '../../site/modals/roles-modal/roles-modal.component';
 
 @NgModule({
   declarations: [
@@ -51,7 +57,6 @@ import { DateInputComponent } from '../../site/formControls/date-input/date-inpu
     PasswordStrengthDirective, //for validation template driven form
     UserNameAllowedDirective, //for validation template driven form
     UserNameCheckDirective, //for validation template driven form
-
     HomeComponent,
     RegisterComponent, //template driven form
     RegisterReactiveformComponent, //reactive form
@@ -68,6 +73,11 @@ import { DateInputComponent } from '../../site/formControls/date-input/date-inpu
     SampleComponent,
     TextInputComponent,
     DateInputComponent,
+    AdminPanelComponent,
+    UserManagementComponent,
+    PhotoManagementComponent,
+    IsInRoleDirective,
+    RolesModalComponent, //directive for checking roles to handle the admin link, add to export as well
   ],
   imports: [
     CommonModule,
@@ -85,6 +95,7 @@ import { DateInputComponent } from '../../site/formControls/date-input/date-inpu
     PaginationModule.forRoot(),
     ButtonsModule.forRoot(),
     TimeagoModule.forRoot(),
+    ModalModule.forRoot(),
   ],
   exports: [
     AppRoutingModule,
@@ -101,6 +112,8 @@ import { DateInputComponent } from '../../site/formControls/date-input/date-inpu
     PaginationModule,
     ButtonsModule,
     TimeagoModule,
+    ModalModule,
+    IsInRoleDirective,
   ]
 })
 export class SharedModule { }

@@ -1,5 +1,6 @@
 using System;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -7,6 +8,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using MSC.Core.DB.Data;
+using MSC.Core.DB.Entities;
 using MSC.Core.Extensions;
 using MSC.Core.Middleware;
 
@@ -91,13 +93,17 @@ app.UseAuthorization();
 app.MapControllers();
 
 /***Custom Section Seed Data Start***/
+//IR_REFACTOR
 using var scope = app.Services.CreateScope();
 var services = scope.ServiceProvider;
 try{
     var context = services.GetRequiredService<DataContext>();
+    var userManager = services.GetRequiredService<UserManager<AppUser>>();
+    var roleManager = services.GetRequiredService<RoleManager<AppRole>>();
     //Asynchronously applies any pending migrations for the context to the database. Will create the database if it does not already exist.
     await context.Database.MigrateAsync();
-    await SeedData.SeedUsers(context);
+    //await SeedData.SeedUsers(context);
+    await SeedData.SeedUsers(userManager, roleManager);
 }
 catch(Exception ex)
 {
