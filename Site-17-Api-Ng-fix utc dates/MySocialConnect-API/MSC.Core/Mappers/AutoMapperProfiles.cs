@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using AutoMapper;
 using MSC.Core.DB.Entities;
@@ -17,6 +18,12 @@ public class AutoMapperProfiles : Profile
         Map_UserRegisterDto_To_AppUser();
         Map_MemberUpdateDto_To_AppUser();
         Map_Message_to_MessageDto();
+
+        //all dates to be passed back as UTC. EF when pulling dates is not adding Z to the dates
+        //this will handle all datetims that are not optional
+        CreateMap<DateTime, DateTime>().ConvertUsing(d => DateTime.SpecifyKind(d, DateTimeKind.Utc));
+        //for optional dates
+        CreateMap<DateTime?, DateTime?>().ConvertUsing(d => d.HasValue ? DateTime.SpecifyKind(d.Value, DateTimeKind.Utc) : null);
     }
 
     #region Mappers start

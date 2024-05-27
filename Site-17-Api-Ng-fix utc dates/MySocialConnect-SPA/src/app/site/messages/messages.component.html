@@ -65,7 +65,7 @@
                         <strong>{{ getMemberUserName(message) | titlecase }}</strong>
                     </div>
                 </td>
-                <td>{{ message.dateMessageSent + 'Z' | timeago }}</td>
+                <td>{{ message.dateMessageSent | timeago }}</td>
                 <td class="text-center">
                     <!--there is link on the row. add second link to stop propagation -->
                     <button type="button" class="btn btn-danger btn-sm" (click)="$event.stopPropagation()" (click)="onDeleteMessage(message.guid)" title="Delete">Delete</button>
