@@ -1,0 +1,92 @@
+
+<div class="mb-4 d-flex">
+    <!--redio buttons-->
+    <div class="btn-group" name="messageType">
+        <button class="btn btn-primary btn-small me-1"
+            [ngClass]="{'btn-success': msgTypeString == zMessageType[zMessageType.inboxUnread]}"
+            [(ngModel)]="msgParams.messageType"
+            btnRadio="{{zMessageType.inboxUnread}}"
+            (click)="loadMessages()"
+            >
+            <i class="fa fa-envelope"></i> Unread
+        </button>
+
+        <button class="btn btn-primary btn-small me-1"
+            [ngClass]="{'btn-success': msgTypeString == zMessageType[zMessageType.inbox]}"
+            [(ngModel)]="msgParams.messageType"
+            btnRadio="{{zMessageType.inbox}}"
+            (click)="loadMessages()"
+            >
+            <i class="fa fa-envelope-open"></i> Inbox
+        </button>
+
+        <button class="btn btn-primary btn-small me-1"
+            [ngClass]="{'btn-success': msgTypeString == zMessageType[zMessageType.outbox]}"
+            [(ngModel)]="msgParams.messageType"
+            btnRadio="{{zMessageType.outbox}}"
+            (click)="loadMessages()"
+            >
+            <i class="fa fa-regular fa-paper-plane"></i> Outbox
+        </button>
+    </div>
+</div>
+
+<!--when no messages are found then displaying conditional messages-->
+<div class="row" *ngIf="!isGettingMessage && messages?.length === 0" [ngSwitch]="msgTypeString">
+    <h3 *ngSwitchCase="zMessageType[zMessageType.inbox]">Inbox no messages</h3>
+    <h3 *ngSwitchCase="zMessageType[zMessageType.inboxUnread]">No unread messages</h3>
+    <h3 *ngSwitchDefault>Nothing in outbox</h3>
+</div>
+
+<!--displaying messages-->
+<div class="row" *ngIf="messages!.length > 0">
+    <table class="table table-hover table-striped table-bordered" style="cursor: pointer">
+        <thead class="thead-dark">
+            <tr>
+                <th style="width: 60%">Message</th>
+                <th style="width: 15%">{{ fromTo }}</th>
+                <th style="width: 15%">{{ sentReceived }}</th>
+                <th style="width: 10%"></th>
+            </tr>
+        </thead>
+        <tbody class="align-middle">
+            <tr [hidden]="isGettingMessage" *ngFor="let message of messages" 
+                routerLink='{{ getMemberDetailLink(message) }}' 
+                [queryParams]="{tab: 'messages'}" 
+                title="{{ message.dateMessageRead ? 'View Details' : 'Unread - View Details' }}">
+                <td class="message-content">
+                    <span class="" *ngIf="!message.dateMessageRead"><i class="fa fa-envelope-o" aria-hidden="true"></i>&nbsp;</span>
+                    <span class="" *ngIf="message.dateMessageRead"><i class="fa fa-envelope-open-o" aria-hidden="true"></i>&nbsp;</span>
+                    {{message.messageContent}}
+                </td>
+                <td>
+                    <div>
+                        <img class="img-circle rounded-circle me-2" src="{{ getMemberPhotoUrl(message)  || './assets/user.png' }}" alt="{{ getMemberUserName(message) }}">
+                        <strong>{{ getMemberUserName(message) | titlecase }}</strong>
+                    </div>
+                </td>
+                <td>{{ message.dateMessageSent + 'Z' | timeago }}</td>
+                <td class="text-center">
+                    <!--there is link on the row. add second link to stop propagation -->
+                    <button type="button" class="btn btn-danger btn-sm" (click)="$event.stopPropagation()" (click)="onDeleteMessage(message.guid)" title="Delete">Delete</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="d-flex justify-content-center" *ngIf="pagination && messages!.length > 0">
+    <pagination
+        [boundaryLinks]="true"
+        [totalItems]="pagination.totalItems"
+        [itemsPerPage]="pagination.itemsPerPage"
+        [(ngModel)]="pagination.currentPage"
+        (pageChanged)="onPageChange($event)"
+        previousText="&lsaquo;" 
+        nextText="&rsaquo;" 
+        firstText="&laquo;" 
+        lastText="&raquo;"
+        >
+
+    </pagination>
+</div>
