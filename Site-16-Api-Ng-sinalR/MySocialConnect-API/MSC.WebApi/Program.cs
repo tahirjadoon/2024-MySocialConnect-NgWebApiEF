@@ -11,6 +11,7 @@ using MSC.Core.DB.Data;
 using MSC.Core.DB.Entities;
 using MSC.Core.Extensions;
 using MSC.Core.Middleware;
+using MSC.WebApi.SignalR;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -92,22 +93,42 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+/***Custom SignalR EndPoint - to put after app.MapControllers() Start***/
+app.MapHub<PresenceHub>("hubs/presence");
+app.MapHub<MessageHub>("hubs/message");
+/***Custom SignalR EndPoint End***/
+
 /***Custom Section Seed Data Start***/
 //IR_REFACTOR
 using var scope = app.Services.CreateScope();
 var services = scope.ServiceProvider;
+var logger = services.GetService<ILogger<Program>>();
 try{
+
     var context = services.GetRequiredService<DataContext>();
     var userManager = services.GetRequiredService<UserManager<AppUser>>();
     var roleManager = services.GetRequiredService<RoleManager<AppRole>>();
     //Asynchronously applies any pending migrations for the context to the database. Will create the database if it does not already exist.
     await context.Database.MigrateAsync();
+
+    try{
+        //Remove old MessageHub Connection app start. TRUNCATE doesn't work with SQLITE
+        //way #1
+        //context.SignalRConnections.RemoveRange(context.SignalRConnections);
+        //way #2
+        //var remove = @"TRUNCATE TABLE [SignalRConnections]";
+        var remove = @"DELETE FROM [SignalRConnections]";
+        await context.Database.ExecuteSqlRawAsync(remove);
+    }
+    catch (Exception ex){
+        logger.LogError(ex, ex.Message);
+    }
+    
     //await SeedData.SeedUsers(context);
     await SeedData.SeedUsers(userManager, roleManager);
 }
 catch(Exception ex)
 {
-    var logger = services.GetService<ILogger<Program>>();
     logger.LogError(ex, "An error occured during seeding data");
 }
 /***Custom Section Seed Data End***/

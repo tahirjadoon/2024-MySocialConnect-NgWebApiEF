@@ -9,6 +9,7 @@ namespace MSC.Core.BusinessLogic;
 
 public interface IMessageBusinessLogic
 {
+    Task<BusinessResponse> AddMessageWithReadRecipt(MessageCreateDto msg, int senderId, bool markMsgAsRead);
     Task<BusinessResponse> AddMessage(MessageCreateDto msg, int senderId);
     Task<BusinessResponse> DeleteMessage(int currentUserId, Guid msgGuid);
     void DeleteMessage(UserMessage message);

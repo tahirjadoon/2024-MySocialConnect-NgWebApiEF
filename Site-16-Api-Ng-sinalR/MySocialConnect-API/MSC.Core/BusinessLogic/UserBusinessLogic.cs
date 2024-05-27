@@ -64,12 +64,22 @@ public class UserBusinessLogic : IUserBusinessLogic
         if(users == null || !users.Any()) return null;
         return users;
     }
-    public async Task<AppUser> GetUserRawAsync(string userName)
+    public async Task<AppUser> GetUserRawAsync(string userName, bool includePhotos = false)
     {
         if(string.IsNullOrWhiteSpace(userName)) 
             throw new ValidationException("User name missing");
         
-        var user = await _userRepo.GetUserRawAsync(userName);
+        var user = await _userRepo.GetUserRawAsync(userName, includePhotos);
+
+        return user;
+    }
+
+    public async Task<AppUser> GetUserRawAsync(int id, bool includePhotos = false)
+    {
+        if(id <= 0)
+            throw new ValidationException("User id missing");
+
+        var user = await _userRepo.GetUserAsync(id, includePhotos);
 
         return user;
     }

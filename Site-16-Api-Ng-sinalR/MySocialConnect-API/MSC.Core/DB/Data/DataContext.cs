@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using CloudinaryDotNet.Actions;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using MSC.Core.DB.Entities;
+using MSC.Core.DB.Entities.SignalR;
 
 namespace MSC.Core.DB.Data;
 
@@ -42,6 +44,10 @@ public class DataContext : IdentityDbContext<AppUser, //class we created
     //table name will be created as "Messages"
     //creating the db set so that we can directly query
     public DbSet<UserMessage> Messages {get; set;}
+
+    public DbSet<SignalRGroup> SignalRGroups { get; set; }
+
+    public DbSet<SignalRConnection> SignalRConnections { get; set; }
 
     //override OnModelCreating to create the relationshops for the likes
     //give entities some configuration

@@ -4,6 +4,7 @@ import { BehaviorSubject, map } from 'rxjs';
 import { HttpClientService } from './http-client.service';
 import { HelperService } from './helper.service';
 import { LocalStorageService } from './local-storage.service';
+import { PresenceHubService } from './signalr/presence-hub.service';
 
 import { LoginDto } from '../models-interfaces/login-dto.model';
 import { LoggedInUserDto } from '../models-interfaces/logged-in-user-dto.model';
@@ -24,7 +25,8 @@ export class AccountService {
   //helper service has the urls etc, this will build the base url properly
   constructor(private httpClientService: HttpClientService, 
               private helperService: HelperService, 
-              private localStorageService: LocalStorageService) { }
+              private localStorageService: LocalStorageService, 
+              private presenseHubService: PresenceHubService) { }
 
   checkUser(userName: string){
     const url = this.helperService.replaceKeyValue(this.helperService.urlAccountCheckUser, this.helperService.keyName, userName);
@@ -36,6 +38,9 @@ export class AccountService {
     //remove the user
     this.localStorageService.removeUser();
     this.fireCurrentUser(null);
+
+    //presence hub
+    this.stopHubConnection();
   }
 
   //set the user in local storage and fire the user so that any one subscribing to it can action
@@ -96,8 +101,12 @@ export class AccountService {
     
     this.localStorageService.setUser(user);
     this.fireCurrentUser(user);
+
+    //presence hub
+    this.createHubConnection(user);
   }
 
+  //this being called from the app.component.ts
   getAndFireCurrentUser(){
     const user: LoggedInUserDto = this.localStorageService.getUser();
     if(!user) {
@@ -105,6 +114,8 @@ export class AccountService {
       return;
     }
     this.fireCurrentUser(user);
+    //presence hub
+    this.createHubConnection(user);
   }
 
   getDecodedToken(token: string) :any {
@@ -116,5 +127,13 @@ export class AccountService {
     var parsedToken = token.split(".")[1];
     var decoded = JSON.parse(atob(parsedToken));
     return decoded;
+  }
+
+  private createHubConnection(user: LoggedInUserDto){
+    this.presenseHubService.createHubConnection(user);
+  }
+
+  private stopHubConnection(){
+    this.presenseHubService.stopHubConnection();
   }
 }

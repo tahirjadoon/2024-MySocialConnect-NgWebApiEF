@@ -4,17 +4,21 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { TabDirective, TabsModule, TabsetComponent } from 'ngx-bootstrap/tabs';
 import { GalleryItem, GalleryModule, ImageItem } from 'ng-gallery';
 import { ToastrService } from 'ngx-toastr';
-import { Subscription } from 'rxjs';
+import { Subscription, take } from 'rxjs';
 import { TimeagoModule } from 'ngx-timeago';
 
 import { UserDto } from '../../../core/models-interfaces/user-dto.model';
 import { MessageDto } from 'src/app/core/models-interfaces/message-dto.model';
+import { LoggedInUserDto } from '../../../core/models-interfaces/logged-in-user-dto.model';
 
 import { MemberService } from '../../../core/services/member.service';
-import { MessageService } from 'src/app/core/services/message.service';
+import { MessageService } from '../../../core/services/message.service';
+import { AccountService } from '../../../core/services/account.service';
+
+import { PresenceHubService } from '../../../core/services/signalr/presence-hub.service';
+import { MessageHubService } from '../../../core/services/signalr/message-hub.service';
 
 import { MemberMessagesComponent } from '../member-messages/member-messages.component';
-
 
 @Component({
   selector: 'app-member-detail',
@@ -45,17 +49,33 @@ export class MemberDetailComponent implements OnInit, OnDestroy {
   memberDataFromRouteSubscription!: Subscription;
   queryParamSubscripton!: Subscription;
 
+  user: LoggedInUserDto = <LoggedInUserDto>{};
+
   constructor(private memberService: MemberService, 
               private activatedRoute: ActivatedRoute, 
               private router: Router,
               private toastr: ToastrService,
-              private messageService: MessageService){}
+              private messageService: MessageService,
+              public presenceHubService: PresenceHubService, 
+              private messageHubService: MessageHubService, 
+              private accountService: AccountService){
+    //get the logged in user
+    this.accountService.currentLoggedInUser$.pipe(take(1)).subscribe({
+      next: (user: LoggedInUserDto | null) => {
+        if(user)
+          this.user = user;
+      }
+    });
+  }
 
   ngOnDestroy(): void {
     if(this.memberSubscription) this.memberSubscription.unsubscribe();
     if(this.messageThreadSubscription) this.messageThreadSubscription.unsubscribe();
     if(this.memberDataFromRouteSubscription) this.memberDataFromRouteSubscription.unsubscribe();
     if(this.queryParamSubscripton) this.queryParamSubscripton.unsubscribe();
+
+    //also stop the message hub connection. This happening below on activated tab as well 
+    this.messageHubService.stopHubConnection();
   }
 
   ngOnInit(): void {
@@ -146,9 +166,19 @@ export class MemberDetailComponent implements OnInit, OnDestroy {
 
   onTabActivated(data: TabDirective){
     this.activeTab = data;
-    if(this.activeTab.heading === "Messages"){
-      this.loadMessages();
+    //user check and else put in place after message hub implementation
+    if(this.activeTab.heading === "Messages" && this.user){
+      //using presence hub to get the messages now rather than from the message service
+      //note that we are not passing the messages from detail to messages any more
+      //only create the hub connection here
+      //this.loadMessages();
+      this.messageHubService.createHubConnection(this.user, this.member.userName, this.member.id);  
     }
+    else{
+      //also happening in ngOnDestroy
+      this.messageHubService.stopHubConnection();
+    }
+
   }
 
   loadMessages(){

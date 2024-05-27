@@ -10,6 +10,8 @@ export class HelperService {
   private isProduction: boolean = environment.production;
   private isLogConsole: boolean = environment.displayConsoleLog;
   private baseUrlServer: string = environment.usebaseUrlHttps ? environment.webApiBaseUrlHttps : environment.webApiBaseUrlHttp;
+  private baseUrlHub: string = environment.usebaseUrlHttps ? environment.webApiBaseHubsUrlHttps : environment.webApiBaseHubsUrlHttp;
+
   //private baseUrlApi: string = `${this.baseUrlServer}api`;
   private loadingSpinnerDelayMiliSec: number = environment.loadingSpinnerDelayMiliSec;
 
@@ -95,6 +97,10 @@ export class HelperService {
   public urlAdminGetUsersWithRoles: string = `${this.urlAdmin}/users-with-roles`;
   public urlAdminGetPhotosToModerate: string = `${this.urlAdmin}/photos-to-moderate`;
   public urlAdminEditRoles: string = `${this.urlAdmin}/edit-roles/${this.keyGuid}`;
+
+  //signalr end points
+  public urlSignalrPresence: string = `${this.baseUrlHub}presence`;
+  public urlSignalrMessage: string = `${this.baseUrlHub}message`;
 
   //paths for which the spinner is not needed
   private spinnerNotAllowedUrls: SpinnerNotAllowed[] = [

@@ -4,6 +4,7 @@ import { ToastrService } from 'ngx-toastr';
 
 import { UserDto } from '../../../core/models-interfaces/user-dto.model';
 import { MemberService } from '../../../core/services/member.service';
+import { PresenceHubService } from '../../../core/services/signalr/presence-hub.service';
 
 @Component({
   selector: 'app-member-card',
@@ -16,7 +17,9 @@ export class MemberCardComponent implements OnInit, OnDestroy {
 
   addLikeSubscription!: Subscription;
 
-  constructor(private memberService: MemberService, private toastrService: ToastrService){}
+  constructor(private memberService: MemberService, 
+              private toastrService: ToastrService, 
+              public presenceHubService: PresenceHubService){}
 
   ngOnDestroy(): void {
     

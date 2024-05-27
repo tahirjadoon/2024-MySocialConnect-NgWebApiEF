@@ -5,6 +5,7 @@ import { ToastrService } from 'ngx-toastr';
 import { CommonModule } from '@angular/common';
 
 import { MessageService } from '../../../core/services/message.service';
+import { MessageHubService } from '../../../core/services/signalr/message-hub.service';
 
 import { MessageDto } from '../../../core/models-interfaces/message-dto.model';
 
@@ -24,21 +25,38 @@ export class MemberMessagesComponent implements OnInit, OnDestroy {
   @ViewChild('messageForm') msgForm!: NgForm;
 
   @Input() memberIn!:UserDto;
+  //not passing the messages any more after message hub iplementation
   @Input() messagesIn: MessageDto[] = [];
 
   messageContent: string = '';
 
   messageSubscription!: Subscription;
+  messageHubSubscription!: Subscription;
 
-  constructor(private messageService: MessageService, private toastr: ToastrService){}
+  constructor(private messageService: MessageService, 
+              private toastr: ToastrService, 
+              private messageHubService: MessageHubService){}
 
   ngOnDestroy(): void {
     if(this.messageSubscription) this.messageSubscription.unsubscribe();
+    if(this.messageHubSubscription) this.messageHubSubscription.unsubscribe();
   }
 
   ngOnInit(): void {
+    this.loadMessagesFromMessageHub();
   }
 
+  loadMessagesFromMessageHub(){
+    this.messageHubSubscription = this.messageHubService.messageThread$.subscribe({
+      next: (messages: MessageDto[]) => {
+        //just use the input messages here
+        this.messagesIn = messages;
+      }
+    })
+  }
+
+  //not using this any more
+  //using the message hub create message methos
   onSubmitMessage(){
     if(!this.memberIn || !this.memberIn.id){
       this.toastr.error('User error', 'Error');
@@ -51,6 +69,7 @@ export class MemberMessagesComponent implements OnInit, OnDestroy {
           this.toastr.error("Unable to get back the created message. Refresh page...", "Error");
           return;
         }
+        //not using it after the message hub implementation
         this.messagesIn.push(message);
         this.msgForm.reset();
         //this.messageContent = "";
@@ -58,7 +77,21 @@ export class MemberMessagesComponent implements OnInit, OnDestroy {
       error: e => {},
       complete: () => {}
     })
+  }
+
+  OnSubmitMessageUsingHub(){
+    if(!this.memberIn || !this.memberIn.id){
+      this.toastr.error('User error', 'Error');
+      return;
+    }
+    //this is returning a promise
+    //The newly added message will show via loadMessagesFromMessageHub 
+    this.messageHubService.createMessage(this.memberIn.id, this.messageContent)
+                          .then(() => {
+                            this.msgForm.reset();
+                          });
 
   }
+
 
 }

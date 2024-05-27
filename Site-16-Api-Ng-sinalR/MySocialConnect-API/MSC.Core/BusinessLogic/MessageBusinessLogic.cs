@@ -23,7 +23,19 @@ public class MessageBusinessLogic : IMessageBusinessLogic
         _mapper = mapper;
     }
 
+    public async Task<BusinessResponse> AddMessageWithReadRecipt(MessageCreateDto msg, int senderId, bool markMsgAsRead)
+    {
+        var result = await AddMessageHandle(msg, senderId, markMsgAsRead);
+        return result;
+    }
+
     public async Task<BusinessResponse> AddMessage(MessageCreateDto msg, int senderId)
+    {
+        var result = await AddMessageHandle(msg, senderId, markMsgAsRead: false);
+        return result;
+    }
+
+    private async Task<BusinessResponse> AddMessageHandle(MessageCreateDto msg, int senderId, bool markMsgAsRead = false)
     {
         if(msg == null || msg.RecipientId <= 0 || string.IsNullOrWhiteSpace(msg.MessageContent))
             return new BusinessResponse(HttpStatusCode.BadRequest, "Message not good");
@@ -47,6 +59,10 @@ public class MessageBusinessLogic : IMessageBusinessLogic
             MessageContent = msg.MessageContent
         };
 
+        if(markMsgAsRead){
+            message.DateMessageRead = DateTime.UtcNow;
+        }
+
         _msgRepo.AddMessage(message);
         if(await _msgRepo.SaveAllSync())
         {
@@ -54,7 +70,7 @@ public class MessageBusinessLogic : IMessageBusinessLogic
             return new BusinessResponse(HttpStatusCode.OK, "", msgDto);
         }
 
-        return new BusinessResponse(HttpStatusCode.BadRequest, "Unable to send message");    
+        return new BusinessResponse(HttpStatusCode.BadRequest, "Unable to send message");
     }
 
     public async Task<BusinessResponse> DeleteMessage(int currentUserId, Guid msgGuid)

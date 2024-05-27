@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -16,6 +17,7 @@ using MSC.Core.Helper;
 using MSC.Core.Mappers;
 using MSC.Core.Repositories;
 using MSC.Core.Services;
+using MSC.Core.SignalR;
 
 namespace MSC.Core.Extensions;
 
@@ -58,6 +60,11 @@ public static class AppServiceExtensions
         //add the action filter as a service, it wil get applied to the abse controller
         services.AddScoped<LogUserActivityFilter>();
 
+        services.AddSignalR();
+        services.AddSingleton<PresenceTrackerMemory>();
+        services.AddScoped<ISignalRRepository, SignalRRepository>();
+        services.AddScoped<ISignalRBusinessLogic, SignalRBusinessLogic>();
+
         return services;
     }
 
@@ -81,7 +88,10 @@ public static class AppServiceExtensions
                                 {
                                     policy.WithOrigins(allowedSpecificOrigins.ToArray())
                                     .AllowAnyHeader()
-                                    .AllowAnyMethod();
+                                    .AllowAnyMethod()
+                                    //signalR
+                                    .AllowCredentials()
+                                    ;
                                 });
             });
         }
@@ -114,12 +124,32 @@ public static class AppServiceExtensions
 
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         .AddJwtBearer(options => {
+            //http authentication
             options.TokenValidationParameters = new TokenValidationParameters
             {
                 ValidateIssuerSigningKey = true, 
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config.GetTokenKey())), 
                 ValidateIssuer = false, 
                 ValidateAudience = false
+            };
+
+            //signalR or websockets cannot send authentication header. Have to use query string with SignalR
+            //signalR, this allows the client to send the token as query string
+            options.Events = new JwtBearerEvents
+            {
+                //pass it as a query string
+                OnMessageReceived  = context => 
+                {
+                    //get access_token from the query
+                    var accessToken = context.Request.Query["access_token"];
+                    //check the path of the request and only do for signalr. Our paths starts with hubs/ check programs.cs for details
+                    var path = context.HttpContext.Request.Path;
+                    if(!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/hubs"))
+                    {
+                        context.Token = accessToken;
+                    }
+                    return Task.CompletedTask;
+                }
             };
         });
 

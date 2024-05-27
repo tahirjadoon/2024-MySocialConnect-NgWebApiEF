@@ -16,7 +16,9 @@ public interface IUserBusinessLogic
     //Task<IEnumerable<UserDto>> GetUsersAMQEAsync();
     Task<PagedList<UserDto>> GetUsersAMQEAsync(UsersSearchParamDto userParams, Guid userGuid);
 
-    Task<AppUser> GetUserRawAsync(string userName);
+    Task<AppUser> GetUserRawAsync(string userName, bool includePhotos = false);
+
+    Task<AppUser> GetUserRawAsync(int userName, bool includePhotos = false);
 
     Task<UserDto> GetUserAsync(int id);
     //same as above "GetUserAsync" but using auto mapper queryable extensions

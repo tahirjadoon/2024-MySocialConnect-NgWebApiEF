@@ -5,6 +5,9 @@
             <img src="{{member.photoUrl || './assets/user.png'}}" alt="{{member.displayName | titlecase}}" 
                 class="card-img-top img-thumbnail">
             <div class="card-body">
+                <div class="mb-2" *ngIf="(presenceHubService.onlineUsers$ | async)?.includes(member.userName)">
+                    <i class="fa fa-user-circle text-success"></i> Online now
+                </div>
                 <div>
                     <strong>Location:</strong>
                     <p>{{member.city}}, {{member.country}}</p>
@@ -49,7 +52,10 @@
                 <gallery *ngIf="photoTab.active" [items]="images" class="gallery"></gallery>
             </tab>
             <tab heading="Messages" (selectTab)="onTabActivated($event)">
+                <!--not passing the messages any more after message hub implementation
                 <app-member-messages [memberIn]="member" [messagesIn]="messages"></app-member-messages>
+                -->
+                <app-member-messages [memberIn]="member"></app-member-messages>
             </tab>
         </tabset>
 
