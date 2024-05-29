@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 
@@ -21,6 +21,7 @@ import { ZRoles } from '../../core/enums/z-roles';
 export class NavComponent implements OnInit, AfterViewInit, OnDestroy {
   //put focus on page load in username
   @ViewChild('username', { static: false }) userNameElement!: ElementRef;
+  @ViewChild('navbarCollapse') navbarCollapseElement!: ElementRef;
 
   private isExecutingLogin: boolean = false;
   putFocus = false;
@@ -41,7 +42,9 @@ export class NavComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(private helperService: HelperService, private accountService: AccountService, 
             private router: Router, 
             private toastr: ToastrService, 
-            private activatedRoute: ActivatedRoute) { }
+            private activatedRoute: ActivatedRoute, 
+            private el: ElementRef, 
+            private renderer: Renderer2) { }
   
   ngAfterViewInit(): void {
     this.putFocus = true;
@@ -111,6 +114,7 @@ export class NavComponent implements OnInit, AfterViewInit, OnDestroy {
     //instead of r can also use () or _
     this.loginSubscription = this.accountService.login(this.loginDto).subscribe({
       next: r => {
+        this.onNavBarItemClickCloseNavBar();
         this.helperService.logIfFrom(r, 'Login.User Response');
         //clear the login form
         this.loginDto = <LoginDto>{};
@@ -136,10 +140,28 @@ export class NavComponent implements OnInit, AfterViewInit, OnDestroy {
     //logout the user
     //this.isLoggedIn = false;
     this.accountService.logout();
+    this.onNavBarItemClickCloseNavBar();
     setTimeout(() => {
       this.focusUserName();
       this.returnUrl = "";
       this.router.navigateByUrl("/");
     }, 500);
+  }
+
+  //hide the navbar in mobile mode after an action has been performed 
+  onNavBarItemClickCloseNavBar() {
+    console.log("onNavBarItemClickCloseNavBar");
+    const classToRemove = "show";
+
+    /*
+    //renderer2 method
+    var navBarCollapseTargetItem = this.el.nativeElement.querySelector('#navbarCollapse');
+    this.renderer.removeClass(navBarCollapseTargetItem, classToRemove);
+    */
+    
+    //view child method
+    if(this.navbarCollapseElement && this.navbarCollapseElement.nativeElement.classList.contains(classToRemove)){
+      this.navbarCollapseElement.nativeElement.classList.remove(classToRemove);
+    }
   }
 }
