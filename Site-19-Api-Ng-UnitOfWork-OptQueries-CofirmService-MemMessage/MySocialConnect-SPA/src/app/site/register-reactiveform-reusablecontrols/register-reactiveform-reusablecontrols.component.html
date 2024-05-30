@@ -1,0 +1,71 @@
+<!-- 
+    we can eihter use registerForm.get("userName") 
+    or can use convenience getter rf which stands for registerForm
+    in this case not using rf['userName'].pristine, which means the value has not yet changed in the UI
+-->
+<div>
+    <form [formGroup]="registerForm" (ngSubmit)="registerForm.valid && onRegister()" autocomplete="off">
+        <h2 class="text-center text-primary">ReactiveForm-ReusableControls Sign up</h2>
+        <hr>
+
+        <!--reset style in local .css is commented-->
+        <fieldset class="reset mb-3">
+            <legend class="reset">Who you are?</legend>
+            <div class="mb-3">
+                <label style="margin-right: 10px;">I am a: </label>
+                <label class="form-check-label" *ngFor="let gl of genderList; let i = index">
+                    <!--apply the margin to the left side of the second radio button :) -->
+                    <input type="radio" class="form-check-input" value="{{ gl.value }}" formControlName="gender" [class.ms-3]="i == 1"> {{ gl.label }}
+                </label>
+            </div>
+            <app-text-input [formControl]="rf2('displayName')" [label]="'Display name'" [placeHolder]="'display name'"></app-text-input>
+            <app-date-input [formControl]="rf2('dateOfBirth')" [label]="'Date Of Birth'" [placeHolder]="'date of birth MM/DD/YYYY'" [maxDate]="maxDate"></app-date-input>
+            <app-text-input [formControl]="rf2('city')" [label]="'City'" [placeHolder]="'city'"></app-text-input>
+            <app-text-input [formControl]="rf2('country')" [label]="'Country'" [placeHolder]="'country'"></app-text-input>
+        </fieldset>
+        
+        <fieldset class="reset mb-3">
+            <legend class="reset">Login info?</legend>
+            <app-text-input [formControl]="rf2('userName')" [label]="'User name'" [placeHolder]="'user name'"></app-text-input>
+            <app-text-input [formControl]="rf2('password')" [type]="'password'" [label]="'Password'" [placeHolder]="'password'"></app-text-input>
+            <app-text-input [formControl]="rf2('confirmPassword')" [type]="'password'" [label]="'Confirm password'" [placeHolder]="'confirm password'" [labelMustMatch]="'Password and confirm password'"></app-text-input>
+        </fieldset>
+
+        <!--display errors returned from the server-->
+        <fieldset class="reset mb-3" *ngIf="validationErrors && validationErrors.length > 0">
+            <legend class="reset">Server Validation Errors</legend>
+            <ul class="text-danger">
+                <li *ngFor="let error of validationErrors">{{ error }}</li>
+            </ul>
+        </fieldset>
+        
+        <div class="text-center">
+            <!--registerForm.pending check is due to use of AsycValidator for unique userName-->
+            <button class="btn btn-success me-2" type="submit" [disabled]="registerForm.invalid || registerForm.pending">Register</button>
+            <button class="btn btn-danger" type="button" (click)="onCancel()">Cancel</button>
+        </div>
+    </form>
+
+    <div class="card mt-2">
+        <div class="card-header">Register Form</div>
+        <div class="card-body">
+            <p>Status: <code>{{ registerForm.status | json }}</code></p>
+            <p>Value: <br>
+                <code>{{ registerForm.value | json }}</code>
+            </p>
+        </div>
+    </div>
+
+    <div class="card mt-2">
+        <div class="card-header">Instructions</div>
+        <div class="card-body">
+            <ul>
+                <li>User name must be Alpha numeric with _ and - are allowed. Number cannot be at start and  _ - should be in the middle</li>
+                <li>User name must be minimum 5 characters</li>
+                <li>Password must be minimum 10 characters</li>
+                <li>Password must have an upper case, lower case, special character, a number and max length 30</li>
+                <li>Password and confirm password must match</li>
+            </ul>
+        </div>
+    </div>
+</div>

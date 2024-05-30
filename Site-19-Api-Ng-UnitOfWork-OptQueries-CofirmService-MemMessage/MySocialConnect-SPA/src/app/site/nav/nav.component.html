@@ -1,0 +1,53 @@
+<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-primary"> <!-- bg-dark-->
+    <div class="container"> <!--container-fluid to container-->
+      <a class="navbar-brand" routerLink="/" routerLinkActive="active"><span class="title">{{ title }}</span></a>
+      
+      <!--responsive-->
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      
+      <div class="collapse navbar-collapse" id="navbarCollapse" #navbarCollapse> <!--responsive nav-->
+        
+        <!--logged in links section-->
+        <ul class="navbar-nav me-auto mb-2 mb-md-0">
+          <ng-container *ngIf="isLoggedIn">
+            <li class="nav-item"><a class="nav-link" routerLink="/members" routerLinkActive="active" (click)="onNavBarItemClickCloseNavBar()">Members </a></li>
+            <li class="nav-item"><a class="nav-link" routerLink="/lists" routerLinkActive="active" (click)="onNavBarItemClickCloseNavBar()">Lists</a></li>
+            <li class="nav-item"><a class="nav-link" routerLink="/messages" routerLinkActive="active" (click)="onNavBarItemClickCloseNavBar()">Messages</a></li>
+            <li class="nav-item" *appIsInRole="[zRole.Admin, zRole.Moderator]">
+              <a class="nav-link" routerLink="/admin" routerLinkActive="active" (click)="onNavBarItemClickCloseNavBar()">Admin</a>
+            </li>
+          </ng-container>
+          <li class="nav-item"><a class="nav-link" routerLink="/errors/sample" routerLinkActive="active" (click)="onNavBarItemClickCloseNavBar()">Sample</a></li>
+        </ul>
+
+        <!--logged in dropped down section-->
+        <div class="dropdown" *ngIf="isLoggedIn" dropdown>
+          <!--add the main photo-->
+          <img src="{{loggedInUser?.mainPhotoUrl || './assets/user.png'}}" alt="">
+
+          <a class="dropdown-toggle text-light text-decoration-none ms-2" dropdownToggle>
+            Welcome {{loggedInUser?.displayName | titlecase}}
+          </a>
+          <div class="dropdown-menu" *dropdownMenu>
+            <a class="dropdown-item" routerLink="members/edit" (click)="onNavBarItemClickCloseNavBar()">Edit Profile</a>
+            <a class="dropdown-item" (click)="onLogout()" (click)="onNavBarItemClickCloseNavBar()">Logout</a>
+          </div>
+        </div>
+
+        <!--not logged in section-->
+        <form *ngIf="!isLoggedIn" #loginForm="ngForm" class="d-flex" (ngSubmit)="onLogin()" autocomplete="off">
+          <input name="username" id="username" #username [(ngModel)]="loginDto.userName"
+            class="form-control me-2" type="text" placeholder="Username" aria-label="Username">
+
+          <input name="password" id="password" #password [(ngModel)]="loginDto.password"
+            class="form-control me-2" type="password" placeholder="Password" aria-label="Password">
+
+          <button class="btn btn-success" type="submit">Login</button>
+        </form>
+      
+      </div><!--response nav container-->
+
+    </div>
+  </nav>

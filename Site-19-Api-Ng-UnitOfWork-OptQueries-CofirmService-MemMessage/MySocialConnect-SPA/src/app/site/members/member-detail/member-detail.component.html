@@ -1,0 +1,64 @@
+<div class="row"> <!--removed *ngIf="member" after resolver-->
+    <div class="col-4">
+        <!--left start-->
+        <div class="card">
+            <img src="{{member.photoUrl || './assets/user.png'}}" alt="{{member.displayName | titlecase}}" 
+                class="card-img-top img-thumbnail">
+            <div class="card-body">
+                <div class="mb-2" *ngIf="(presenceHubService.onlineUsers$ | async)?.includes(member.userName)">
+                    <i class="fa fa-user-circle text-success"></i> Online now
+                </div>
+                <div>
+                    <strong>Location:</strong>
+                    <p>{{member.city}}, {{member.country}}</p>
+                </div>
+                <div>
+                    <strong>Age:</strong>
+                    <p>{{member.age}}</p>
+                </div>
+                <div>
+                    <strong>Last active:</strong>
+                    <!--add the 'Z' to the time, will change later-->
+                    <p>{{member.lastActive | timeago}}</p>
+                </div>
+                <div>
+                    <strong>Member since:</strong>
+                    <p>{{member.createdOn | date: 'dd MMM yyyy'}}</p>
+                </div>
+            </div>
+            <div class="card-footer">
+                <div class="btn-group d-flex">
+                    <button class="btn btn-primary">Like</button>
+                    <button class="btn btn-success" (click)="onSelectTab('Messages')">Messages</button>
+                </div>
+            </div>
+        </div>
+         <!--left end-->
+    </div>
+    <div class="col-8">
+        <!--right start-->
+        <tabset class="member-tabset" #memberTabs>
+            <tab heading="About {{member.displayName | titlecase }}" (selectTab)="onTabActivated($event)">
+                <h4>Description</h4>
+                <p>{{member.introduction}}</p>
+                <h4>Looking for</h4>
+                <p>{{member.lookingFor}}</p>
+            </tab>
+            <tab heading="Interests" (selectTab)="onTabActivated($event)">
+                <h4>Interests</h4>
+                <p>{{member.interests}}</p>
+            </tab>
+            <tab heading="Photos" #photoTab="tab" (selectTab)="onTabActivated($event)"> <!--a template reference variable-->
+                <gallery *ngIf="photoTab.active" [items]="images" class="gallery"></gallery>
+            </tab>
+            <tab heading="Messages" (selectTab)="onTabActivated($event)">
+                <!--not passing the messages any more after message hub implementation
+                <app-member-messages [memberIn]="member" [messagesIn]="messages"></app-member-messages>
+                -->
+                <app-member-messages [memberIn]="member"></app-member-messages>
+            </tab>
+        </tabset>
+
+        <!--right end-->
+    </div>
+</div>
