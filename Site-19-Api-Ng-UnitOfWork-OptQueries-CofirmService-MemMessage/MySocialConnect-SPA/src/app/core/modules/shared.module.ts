@@ -50,6 +50,7 @@ import { PhotoManagementComponent } from '../../site/admin/photo-management/phot
 //directive for limiting the admin link
 import { IsInRoleDirective } from '../directives/is-in-role.directive';
 import { RolesModalComponent } from '../../site/modals/roles-modal/roles-modal.component';
+import { ConfirmModalComponent } from '../../site/modals/confirm-modal/confirm-modal.component';
 
 @NgModule({
   declarations: [
@@ -77,7 +78,8 @@ import { RolesModalComponent } from '../../site/modals/roles-modal/roles-modal.c
     UserManagementComponent,
     PhotoManagementComponent,
     IsInRoleDirective,
-    RolesModalComponent, //directive for checking roles to handle the admin link, add to export as well
+    RolesModalComponent,
+    ConfirmModalComponent, //directive for checking roles to handle the admin link, add to export as well
   ],
   imports: [
     CommonModule,

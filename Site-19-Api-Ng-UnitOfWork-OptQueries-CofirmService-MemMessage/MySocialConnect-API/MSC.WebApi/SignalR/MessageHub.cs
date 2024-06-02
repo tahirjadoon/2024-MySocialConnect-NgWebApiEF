@@ -182,7 +182,7 @@ public class MessageHub : Hub
         group.Connections.Add(connection);
 
         //save
-        if(await _srBl.SaveAllSync())
+        if(await _srBl.SaveAllAsync())
             return group;
 
         throw new HubException("Failed to join group");
@@ -199,7 +199,7 @@ public class MessageHub : Hub
             throw new HubException("Failed to get connection");
 
         _srBl.RemoveConnection(connection);
-        if(await _srBl.SaveAllSync()){
+        if(await _srBl.SaveAllAsync()){
             //group.Connections.Remove(connection);
             return group;
         }

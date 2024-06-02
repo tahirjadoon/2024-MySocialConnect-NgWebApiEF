@@ -1,48 +1,48 @@
 ﻿using System.Threading.Tasks;
 using MSC.Core.DB.Entities.SignalR;
-using MSC.Core.Repositories;
+using MSC.Core.DB.UnitOfWork;
 
 namespace MSC.Core.BusinessLogic;
 
 public class SignalRBusinessLogic : ISignalRBusinessLogic
 {
-    private readonly ISignalRRepository _srRepo;
+    private readonly IUnitOfWork _uow;
 
-    public SignalRBusinessLogic(ISignalRRepository srRepo)
+    public SignalRBusinessLogic(IUnitOfWork uow)
     {
-        _srRepo = srRepo;
+        _uow = uow;
     }
 
-    public async Task<bool> SaveAllSync()
+    public async Task<bool> SaveAllAsync()
     {
-        return await _srRepo.SaveAllSync();
+        return await _uow.SaveChangesAsync();
     }
 
     public void AddGroup(SignalRGroup group)
     {
-        _srRepo.AddGroup(group);
+        _uow.SignalRRepo.AddGroup(group);
     }
 
     public void RemoveConnection(SignalRConnection connection)
     {
-        _srRepo.RemoveConnection(connection);
+        _uow.SignalRRepo.RemoveConnection(connection);
     }
 
     public async Task<SignalRGroup> GetMessageGroup(string groupName)
     {
-       var group = await _srRepo.GetMessageGroup(groupName);
+       var group = await _uow.SignalRRepo.GetMessageGroup(groupName);
        return group;
     }
 
     public async Task<SignalRGroup> GetGroupByConnection(string connectionId)
     {
-        var group = await _srRepo.GetGroupByConnection(connectionId);
+        var group = await _uow.SignalRRepo.GetGroupByConnection(connectionId);
         return group;
     }
 
     public Task<SignalRConnection> GetConnection(string connectionId)
     {
-        var connection = _srRepo.GetConnection(connectionId);
+        var connection = _uow.SignalRRepo.GetConnection(connectionId);
         return connection;
     }
 }

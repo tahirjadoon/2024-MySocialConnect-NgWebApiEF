@@ -10,12 +10,10 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MSC.Core.Constants;
 using MSC.Core.DB.Entities;
+using MSC.Core.DB.UnitOfWork;
 using MSC.Core.Dtos;
 using MSC.Core.Dtos.Pagination;
 using MSC.Core.ExceptionCustom;
-using MSC.Core.Extensions;
-using MSC.Core.Mappers;
-using MSC.Core.Repositories;
 using MSC.Core.Services;
 
 namespace MSC.Core.BusinessLogic;
@@ -24,28 +22,28 @@ public class UserBusinessLogic : IUserBusinessLogic
 {
     private readonly UserManager<AppUser> _userManager;
     private readonly RoleManager<AppRole> _roleManager;
-    private readonly IUserRepository _userRepo;
     private readonly ITokenService _tokenService;
     private readonly IMapper _mapper;
     private readonly IPhotoService _photoService;
+    private readonly IUnitOfWork _uow;
 
     public UserBusinessLogic(UserManager<AppUser> userManager, RoleManager<AppRole> roleManager, 
-                            IUserRepository userRepo, ITokenService tokenService, IMapper mapper, 
-                            IPhotoService photoService)
+                            ITokenService tokenService, IMapper mapper, 
+                            IPhotoService photoService, IUnitOfWork uow)
     {
         _userManager = userManager;
         _roleManager = roleManager;
-        _userRepo = userRepo;
         _tokenService = tokenService;
         _mapper = mapper;
         _photoService = photoService;
+        _uow = uow;
     }
 
     #region Get Users
     public async Task<IEnumerable<UserDto>> GetUsersAsync()
     {
         //return IEnumerable AppUser
-        var users = await _userRepo.GetUsersAsync();
+        var users = await _uow.UserRepo.GetUsersAsync();
         if(users == null || !users.Any())
             return null;
         //return users;
@@ -60,7 +58,7 @@ public class UserBusinessLogic : IUserBusinessLogic
     //signature changed due to pagination
     public async Task<PagedList<UserDto>> GetUsersAMQEAsync(UsersSearchParamDto userParams, Guid userGuid)
     {
-        var users = await _userRepo.GetUsersAMQEAsync(userParams, userGuid);
+        var users = await _uow.UserRepo.GetUsersAMQEAsync(userParams, userGuid);
         if(users == null || !users.Any()) return null;
         return users;
     }
@@ -69,7 +67,7 @@ public class UserBusinessLogic : IUserBusinessLogic
         if(string.IsNullOrWhiteSpace(userName)) 
             throw new ValidationException("User name missing");
         
-        var user = await _userRepo.GetUserRawAsync(userName, includePhotos);
+        var user = await _uow.UserRepo.GetUserRawAsync(userName, includePhotos);
 
         return user;
     }
@@ -79,14 +77,14 @@ public class UserBusinessLogic : IUserBusinessLogic
         if(id <= 0)
             throw new ValidationException("User id missing");
 
-        var user = await _userRepo.GetUserAsync(id, includePhotos);
+        var user = await _uow.UserRepo.GetUserAsync(id, includePhotos);
 
         return user;
     }
 
     public async Task<UserDto> GetUserAsync(int id)
     {
-        var user = await _userRepo.GetUserAsync(id);
+        var user = await _uow.UserRepo.GetUserAsync(id);
         //return user;
 
         if(user == null)
@@ -100,14 +98,14 @@ public class UserBusinessLogic : IUserBusinessLogic
     //same as above "GetUserAsync" but using auto mapper queryable extensions
     public async Task<UserDto> GetUserAMQEAsync(int id)
     {
-        var user = await _userRepo.GetUserAMQEAsync(id);
+        var user = await _uow.UserRepo.GetUserAMQEAsync(id);
         if(user == null) return null;
         return user;
     }
 
     public async Task<UserDto> GetUserAsync(string userName)
     {
-        var user = await _userRepo.GetUserAsync(userName);
+        var user = await _uow.UserRepo.GetUserAsync(userName);
         //return user;
 
         if(user == null)
@@ -121,14 +119,14 @@ public class UserBusinessLogic : IUserBusinessLogic
     //same as above "GetUserAsync" but using auto mapper queryable extensions
     public async Task<UserDto> GetUserAMQEAsync(string userName)
     {
-        var user = await _userRepo.GetUserAMQEAsync(userName);
+        var user = await _uow.UserRepo.GetUserAMQEAsync(userName);
         if(user == null) return null;
         return user;
     }
 
     public async Task<UserDto> GetUserAsync(Guid guid)
     {
-        var user = await _userRepo.GetUserAsync(guid);
+        var user = await _uow.UserRepo.GetUserAsync(guid);
         //return user;
 
         if(user == null)
@@ -142,9 +140,15 @@ public class UserBusinessLogic : IUserBusinessLogic
     //same as above "GetUserAsync" but using auto mapper queryable extensions
     public async Task<UserDto> GetUserAMQEAsync(Guid guid)
     {
-        var user = await _userRepo.GetUserAMQEAsync(guid);
+        var user = await _uow.UserRepo.GetUserAMQEAsync(guid);
         if(user == null) return null;
         return user;
+    }
+
+    public async Task<string> GetUserGenderAsync(Guid guid)
+    {
+        var gender = await _uow.UserRepo.GetUserGenderAsync(guid);
+        return gender;
     }
     
     #endregion Get Users 
@@ -157,7 +161,7 @@ public class UserBusinessLogic : IUserBusinessLogic
             throw new ValidationException("User name missing");
 
         //IR_REFACTOR : use the user manager
-        //return await _userRepo.UserExists(userName);
+        //return await _uow.UserRepo.UserExists(userName);
         return await _userManager.Users.AnyAsync(x => x.UserName.ToLower() == userName.ToLower());
     }
 
@@ -193,7 +197,7 @@ public class UserBusinessLogic : IUserBusinessLogic
 
         //IR_REFACTOR
         /*
-        var isRegister = await _userRepo.RegisterUserAsync(appUser);
+        var isRegister = _uow.UserRepo.Register(appUser);
         if(!isRegister)
             throw new DataFailException("User not registerd");
         */
@@ -206,7 +210,7 @@ public class UserBusinessLogic : IUserBusinessLogic
         if(!roleResult.Succeeded)
             throw new DataFailException(roleResult.Errors.ToString());        
         
-        var returnUser = await _userRepo.GetUserRawAsync(registerUser.UserName, includePhotos: true);
+        var returnUser = await _uow.UserRepo.GetUserRawAsync(registerUser.UserName, includePhotos: true);
         if(returnUser == null)
             throw new DataFailException("Something went wrong. No user found!");
 
@@ -222,7 +226,7 @@ public class UserBusinessLogic : IUserBusinessLogic
             throw new ValidationException("Login info missing");
         
         //IR_REFATCOR:
-        //var user = await _userRepo.GetUserRawAsync(login.UserName, includePhotos: true);
+        //var user = await _uow.UserRepo.GetUserRawAsync(login.UserName, includePhotos: true);
         var user = await _userManager.Users
                                     .Include(p => p.Photos)
                                     .SingleOrDefaultAsync(x => x.UserName == login.UserName.ToLower());
@@ -260,7 +264,7 @@ public class UserBusinessLogic : IUserBusinessLogic
 
     public async Task<bool> UpdateUserAsync(MemberUpdateDto memberUpdateDto, UserClaimGetDto claims)
     {
-        var user = await _userRepo.GetUserRawAsync(claims.UserName);
+        var user = await _uow.UserRepo.GetUserRawAsync(claims.UserName);
         if(user == null || user.Guid != claims.Guid)
             return false;
 
@@ -268,10 +272,10 @@ public class UserBusinessLogic : IUserBusinessLogic
         var updates = _mapper.Map(memberUpdateDto, user);
 
         //issue update
-        _userRepo.Update(updates);
+        _uow.UserRepo.Update(updates);
 
         //save updates
-        if(await _userRepo.SaveAllAsync())
+        if(await _uow.SaveChangesAsync())
             return true;
 
         return false;
@@ -279,7 +283,7 @@ public class UserBusinessLogic : IUserBusinessLogic
 
     public async Task<PhotoDto> AddPhotoAsync(IFormFile file, UserClaimGetDto claims)
     {
-        var appUser = await _userRepo.GetUserRawAsync(claims.UserName, includePhotos: true);
+        var appUser = await _uow.UserRepo.GetUserRawAsync(claims.UserName, includePhotos: true);
         if (appUser == null)
             throw new UnauthorizedAccessException("User not found");
 
@@ -298,8 +302,8 @@ public class UserBusinessLogic : IUserBusinessLogic
         //add the photo
         appUser.Photos.Add(photo);
         
-        //_userRepo.Update(appUser);
-        if(await _userRepo.SaveAllAsync())
+        //_uow.UserRepo.Update(appUser);
+        if(await _uow.SaveChangesAsync())
             return _mapper.Map<PhotoDto>(photo);
 
         return null;
@@ -307,7 +311,7 @@ public class UserBusinessLogic : IUserBusinessLogic
 
     public async Task<BusinessResponse> DeletePhotoAsync(int photoId, UserClaimGetDto claims)
     {
-        var appUser = await _userRepo.GetUserRawAsync(claims.UserName, includePhotos: true);
+        var appUser = await _uow.UserRepo.GetUserRawAsync(claims.UserName, includePhotos: true);
         if (appUser == null)
             throw new UnauthorizedAccessException("User not found");
 
@@ -343,7 +347,7 @@ public class UserBusinessLogic : IUserBusinessLogic
         //remove from data base 
         appUser.Photos.Remove(photo);
 
-        if(await _userRepo.SaveAllAsync())
+        if(await _uow.SaveChangesAsync())
         {
             response.HttpStatusCode = HttpStatusCode.OK;
             return response;
@@ -357,7 +361,7 @@ public class UserBusinessLogic : IUserBusinessLogic
 
     public async Task<bool> SetPhotoMainAsync(int photoId, UserClaimGetDto claims)
     {
-        var appUser = await _userRepo.GetUserRawAsync(claims.UserName, includePhotos: true);
+        var appUser = await _uow.UserRepo.GetUserRawAsync(claims.UserName, includePhotos: true);
         if (appUser == null)
             throw new UnauthorizedAccessException("User not found");
 
@@ -374,7 +378,7 @@ public class UserBusinessLogic : IUserBusinessLogic
         
         photo.IsMain = true;
 
-        if(await _userRepo.SaveAllAsync())
+        if(await _uow.SaveChangesAsync())
             return true;
 
         return false;
@@ -385,14 +389,14 @@ public class UserBusinessLogic : IUserBusinessLogic
        if(id <= 0) return;
 
         //app user 
-        var user = await _userRepo.GetUserAsync(id);
+        var user = await _uow.UserRepo.GetUserAsync(id);
         if (user == null) return;
 
         //update the last active date 
         user.LastActive = DateTime.UtcNow;
 
         //update 
-        await _userRepo.SaveAllAsync();
+        await _uow.SaveChangesAsync();
     }
 
     #endregion Updates

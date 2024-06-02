@@ -13,6 +13,7 @@ using MSC.Core.BusinessLogic;
 using MSC.Core.Constants;
 using MSC.Core.DB.Data;
 using MSC.Core.DB.Entities;
+using MSC.Core.DB.UnitOfWork;
 using MSC.Core.Helper;
 using MSC.Core.Mappers;
 using MSC.Core.Repositories;
@@ -64,6 +65,8 @@ public static class AppServiceExtensions
         services.AddSingleton<PresenceTrackerMemory>();
         services.AddScoped<ISignalRRepository, SignalRRepository>();
         services.AddScoped<ISignalRBusinessLogic, SignalRBusinessLogic>();
+
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         return services;
     }

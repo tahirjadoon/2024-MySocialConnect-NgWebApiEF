@@ -23,6 +23,7 @@ export class UserManagementComponent implements OnInit, OnDestroy {
   rolesUpdateSubscription!: Subscription;
 
   //modal reference for modal window
+  //modal also used in services/confirmService
   bsModalRef: BsModalRef<RolesModalComponent> = new BsModalRef<RolesModalComponent>();
 
   constructor(private helperService: HelperService, 

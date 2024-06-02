@@ -11,7 +11,7 @@ public interface IUserRepository
 {
     void Update(AppUser user);
     
-    Task<bool> SaveAllAsync();
+    //Task<bool> SaveAllAsync();
 
     Task<IEnumerable<AppUser>> GetUsersAsync();
 
@@ -36,5 +36,9 @@ public interface IUserRepository
 
     Task<bool> UserExists(string userName);
 
-    Task<bool> RegisterUserAsync(AppUser user);
+    /*changed the signature after UnitOfWork Implementation*/
+    //Task<bool> RegisterUserAsync(AppUser user);
+    void RegisterUser(AppUser appUser);
+
+    Task<string> GetUserGenderAsync(Guid guid);
 }

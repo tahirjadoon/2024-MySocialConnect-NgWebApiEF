@@ -33,12 +33,15 @@ public class UserRepository : IUserRepository
         _context.Entry(user).State = EntityState.Modified;
     }
 
+    /*
+    Removed after UnitOfWork Implemention
     public async Task<bool> SaveAllAsync()
     {
         //make sure that the changes have been saved
         var isSave = await _context.SaveChangesAsync() > 0;
         return isSave;
     }
+    */
 
     #endregion Update and SaveAll
 
@@ -173,6 +176,12 @@ public class UserRepository : IUserRepository
         return user;
     }
 
+    public async Task<string> GetUserGenderAsync(Guid guid)
+    {
+        var gender = await _context.Users.Where(x => x.Guid == guid).Select(x => x.Gender).FirstOrDefaultAsync();
+        return gender;
+    }
+
     #endregion Get Users
     
     #region Register
@@ -182,6 +191,7 @@ public class UserRepository : IUserRepository
         return await _context.Users.AnyAsync(x => x.UserName.ToLower() == userName.ToLower());
     }
 
+    /*changed the signature after UnitOfWork Implementation
     public async Task<bool> RegisterUserAsync(AppUser appUser)
     {
         if (appUser == null)
@@ -190,6 +200,14 @@ public class UserRepository : IUserRepository
         _context.Users.Add(appUser);
         var isSave = await SaveAllAsync();
         return isSave;
+    }
+    */
+    public void RegisterUser(AppUser appUser)
+    {
+        if (appUser == null)
+            throw new ValidationException("Invalid user");
+
+        _context.Users.Add(appUser);
     }
 
     #endregion Register - Update - SaveAll

@@ -4,22 +4,20 @@ using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
 using MSC.Core.DB.Entities;
+using MSC.Core.DB.UnitOfWork;
 using MSC.Core.Dtos;
 using MSC.Core.Dtos.Pagination;
-using MSC.Core.Repositories;
 
 namespace MSC.Core.BusinessLogic;
 
 public class MessageBusinessLogic : IMessageBusinessLogic
 {
-    private readonly IMessageRepository _msgRepo;
-    private readonly IUserRepository _userRepo;
+    private readonly IUnitOfWork _uow;
     private readonly IMapper _mapper;
 
-    public MessageBusinessLogic(IMessageRepository msgRepo, IUserRepository userRepo, IMapper mapper)
+    public MessageBusinessLogic(IUnitOfWork uow, IMapper mapper)
     {
-        _msgRepo = msgRepo;
-        _userRepo = userRepo;
+        _uow = uow;
         _mapper = mapper;
     }
 
@@ -41,13 +39,13 @@ public class MessageBusinessLogic : IMessageBusinessLogic
             return new BusinessResponse(HttpStatusCode.BadRequest, "Message not good");
 
         //get source user
-        var sender = await _userRepo.GetUserAsync(senderId, includePhotos: true);
+        var sender = await _uow.UserRepo.GetUserAsync(senderId, includePhotos: true);
         if(sender == null)
             return new BusinessResponse(HttpStatusCode.BadRequest, "Logged in user not found");
         if(sender.Id == msg.RecipientId)
             return new BusinessResponse(HttpStatusCode.BadRequest, "You cannot send message to yourself");
 
-        var recipient = await _userRepo.GetUserAsync(msg.RecipientId, includePhotos: true);
+        var recipient = await _uow.UserRepo.GetUserAsync(msg.RecipientId, includePhotos: true);
         if(recipient == null)
             return new BusinessResponse(HttpStatusCode.BadRequest, "Recipient not found");
 
@@ -63,8 +61,8 @@ public class MessageBusinessLogic : IMessageBusinessLogic
             message.DateMessageRead = DateTime.UtcNow;
         }
 
-        _msgRepo.AddMessage(message);
-        if(await _msgRepo.SaveAllSync())
+        _uow.MessageRepo.AddMessage(message);
+        if(await _uow.SaveChangesAsync())
         {
             var msgDto = _mapper.Map<MessageDto>(message);
             return new BusinessResponse(HttpStatusCode.OK, "", msgDto);
@@ -75,7 +73,7 @@ public class MessageBusinessLogic : IMessageBusinessLogic
 
     public async Task<BusinessResponse> DeleteMessage(int currentUserId, Guid msgGuid)
     {
-        var message = await _msgRepo.GetMessage(msgGuid);
+        var message = await _uow.MessageRepo.GetMessage(msgGuid);
         if(message == null)
             return new BusinessResponse(HttpStatusCode.BadRequest, "No message found");
         if(message.Sender.Id != currentUserId && message.Recipient.Id != currentUserId)
@@ -91,10 +89,10 @@ public class MessageBusinessLogic : IMessageBusinessLogic
 
         //when both have deleted it then delete it altogether
         if(message.SenderDeleted && message.RecipientDeleted)
-            _msgRepo.DeleteMessage(message);
+            _uow.MessageRepo.DeleteMessage(message);
 
         //update
-        if(await _msgRepo.SaveAllSync())
+        if(await _uow.SaveChangesAsync())
             return new BusinessResponse(HttpStatusCode.OK);
 
         return new BusinessResponse(HttpStatusCode.BadRequest, "Unable to delete message");
@@ -107,29 +105,34 @@ public class MessageBusinessLogic : IMessageBusinessLogic
 
     public async Task<UserMessage> GetMessage(int id)
     {
-        var message = await _msgRepo.GetMessage(id);
+        var message = await _uow.MessageRepo.GetMessage(id);
         return message;
     }
 
     public async Task<UserMessage> GetMessage(Guid guid)
     {
-        var message = await _msgRepo.GetMessage(guid);
+        var message = await _uow.MessageRepo.GetMessage(guid);
         return message;
     }
 
     public async Task<PagedList<MessageDto>> GetMessagesForUser(MessageSearchParamDto search)
     {
-        var messages = await _msgRepo.GetMessagesForUser(search);
+        var messages = await _uow.MessageRepo.GetMessagesForUser(search);
         return messages;
     }
 
     public async Task<IEnumerable<MessageDto>> GetMessageThread(int currentUserId, int receipientId)
     {
-        var messages = await _msgRepo.GetMessageThread(currentUserId, receipientId);
+        //now return MessageDto so no need to do mapping below
+        var messages = await _uow.MessageRepo.GetMessageThread(currentUserId, receipientId);
         if(messages == null)
             return null;
 
-        var messagesDto = _mapper.Map<IEnumerable<MessageDto>>(messages);
-        return messagesDto;
+        if(_uow.HasChanges())
+            await _uow.SaveChangesAsync();
+
+        //var messagesDto = _mapper.Map<IEnumerable<MessageDto>>(messages);
+        //return messagesDto;
+        return messages;
     }
 }

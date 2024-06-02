@@ -14,6 +14,10 @@ public interface IMessageRepository
     Task<UserMessage> GetMessage(int id);
     Task<UserMessage> GetMessage(Guid guid);
     Task<PagedList<MessageDto>> GetMessagesForUser(MessageSearchParamDto search);
-    Task<IEnumerable<UserMessage>> GetMessageThread(int currentUserId, int receipientId);
-    Task<bool> SaveAllSync();
+
+    /*Method is now returning MessageDto*/
+    //Task<IEnumerable<UserMessage>> GetMessageThread(int currentUserId, int receipientId);
+    Task<IEnumerable<MessageDto>> GetMessageThread(int currentUserId, int receipientId);
+    
+    //Task<bool> SaveAllSync();
 }

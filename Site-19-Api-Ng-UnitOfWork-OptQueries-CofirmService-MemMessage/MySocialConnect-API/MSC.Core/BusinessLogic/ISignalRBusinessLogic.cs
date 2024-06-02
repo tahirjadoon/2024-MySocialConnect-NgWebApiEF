@@ -5,7 +5,7 @@ namespace MSC.Core.BusinessLogic;
 
 public interface ISignalRBusinessLogic
 {
-    Task<bool> SaveAllSync();
+    Task<bool> SaveAllAsync();
 
     void AddGroup(SignalRGroup group);
     void RemoveConnection(SignalRConnection connection);

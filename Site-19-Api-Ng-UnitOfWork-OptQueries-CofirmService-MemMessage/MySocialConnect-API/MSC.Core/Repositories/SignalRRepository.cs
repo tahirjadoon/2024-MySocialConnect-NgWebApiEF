@@ -18,10 +18,13 @@ public class SignalRRepository : ISignalRRepository
         _mapper = mapper;
     }
 
+    /*
+    Commented after UnitOfWork implementation
     public async Task<bool> SaveAllSync()
     {
         return await _context.SaveChangesAsync() > 0;
     }
+    */
     
     public void AddGroup(SignalRGroup group)
     {

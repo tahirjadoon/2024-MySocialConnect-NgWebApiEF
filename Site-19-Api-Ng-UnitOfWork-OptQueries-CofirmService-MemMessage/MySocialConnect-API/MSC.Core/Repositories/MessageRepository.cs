@@ -75,6 +75,7 @@ public class MessageRepository : IMessageRepository
     }
 
     //message thread between two users so check for both ways. Also eagily load photos for both receipent and sender
+    /*updated GetMessageThread with a new method returning MessageDto, projections 
     public async Task<IEnumerable<UserMessage>> GetMessageThread(int currentUserId, int receipientId)
     {
         var messages = await _context.Messages
@@ -92,13 +93,39 @@ public class MessageRepository : IMessageRepository
         {
             //update the date
             unreadMessages.ForEach(x => {x.DateMessageRead = DateTime.UtcNow;});
-            await _context.SaveChangesAsync();
         }
         return messages;
     }
+    */
+    public async Task<IEnumerable<MessageDto>> GetMessageThread(int currentUserId, int receipientId)
+    {
+        var query = _context.Messages
+                            .Where(m => 
+                                (m.RecipientId == currentUserId && m.SenderId == receipientId && !m.RecipientDeleted) || 
+                                (m.RecipientId == receipientId && m.SenderId == currentUserId && !m.SenderDeleted)
+                            )
+                            .OrderBy(m => m.DateMessageSent)
+                            .AsQueryable();
 
+
+        var unreadMessages = query.Where(m => m.DateMessageRead == null && m.Recipient.Id == currentUserId).ToList();
+
+        if(unreadMessages != null && unreadMessages.Any())
+        {
+            //update the date
+            unreadMessages.ForEach(x => {x.DateMessageRead = DateTime.UtcNow;});
+        }
+
+        var messages = await query.ProjectTo<MessageDto>(_mapper.ConfigurationProvider).ToListAsync();
+
+        return messages;
+    }
+
+    /*
+    Commented after UnitOfWork implementation
     public async Task<bool> SaveAllSync()
     {
         return await _context.SaveChangesAsync() > 0;
     }
+    */
 }

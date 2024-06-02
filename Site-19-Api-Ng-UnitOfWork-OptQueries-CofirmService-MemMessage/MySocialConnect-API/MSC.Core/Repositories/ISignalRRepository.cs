@@ -5,7 +5,7 @@ namespace MSC.Core.Repositories;
 
 public interface ISignalRRepository
 {
-    Task<bool> SaveAllSync();
+    //Task<bool> SaveAllSync();
 
     void AddGroup(SignalRGroup group);
     void RemoveConnection(SignalRConnection connection);

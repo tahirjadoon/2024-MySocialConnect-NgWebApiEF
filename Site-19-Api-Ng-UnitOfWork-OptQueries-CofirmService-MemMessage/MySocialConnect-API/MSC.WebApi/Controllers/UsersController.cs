@@ -31,16 +31,18 @@ public class UsersController : BaseApiController
     [HttpGet]
     public async Task<ActionResult<PagedList<UserDto>>> GetUsers([FromQuery]UsersSearchParamDto userParams)
     {
-        //get current user
-        var currentUser = await _userBusinessLogic.GetUserAMQEAsync(User.GetUserName());
-        if(currentUser == null)
+        var userClaims = User.GetUserClaims();
+        if(userClaims == null)
             return BadRequest("User issue");
+
+        //get the current user Gender
+        var gender = await _userBusinessLogic.GetUserGenderAsync(userClaims.Guid);
 
         //var users = await _userBusinessLogic.GetUsersAsync();
         if(string.IsNullOrWhiteSpace(userParams.Gender))
-            userParams.Gender = currentUser.Gender.ToLower() == "male" ? "female" : "male";
+            userParams.Gender = gender.ToLower() == "male" ? "female" : "male";
 
-        var users = await _userBusinessLogic.GetUsersAMQEAsync(userParams, currentUser.GuId);
+        var users = await _userBusinessLogic.GetUsersAMQEAsync(userParams, userClaims.Guid);
         if (users == null || !users.Any())
         {
             return NotFound("No users found!");

@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { TimeagoModule } from 'ngx-timeago';
 import { ToastrService } from 'ngx-toastr';
@@ -13,6 +13,7 @@ import { UserDto } from '../../../core/models-interfaces/user-dto.model';
 import { FormsModule, NgForm } from '@angular/forms';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush, //due to scrolling the messages
   selector: 'app-member-messages',
   standalone: true,
   templateUrl: './member-messages.component.html',

@@ -2,46 +2,44 @@
 using System.Net;
 using System.Threading.Tasks;
 using MSC.Core.DB.Entities;
+using MSC.Core.DB.UnitOfWork;
 using MSC.Core.Dtos;
 using MSC.Core.Dtos.Pagination;
-using MSC.Core.Repositories;
 
 namespace MSC.Core.BusinessLogic;
 
 public class LikesBusinessLogic : ILikesBusinessLogic
 {
-    private readonly ILikesRepository _likeRepo;
-    private readonly IUserRepository _userRepo;
+    private readonly IUnitOfWork _uow;
 
-    public LikesBusinessLogic(ILikesRepository likeRepo, IUserRepository userRepo)
+    public LikesBusinessLogic(IUnitOfWork uow)
     {
-        _likeRepo = likeRepo;
-        _userRepo = userRepo;
+        _uow = uow;
     }
 
     public async Task<UserLike> GetUserLike(int sourceUserId, int targetUserId)
     {
-        var like = await _likeRepo.GetUserLike(sourceUserId, targetUserId);
+        var like = await _uow.LikesRepo.GetUserLike(sourceUserId, targetUserId);
         return like;
     }
 
     public async Task<AppUser> GetUserWithLikes(int userId)
     {
-        var like = await _likeRepo.GetUserWithLikes(userId);
+        var like = await _uow.LikesRepo.GetUserWithLikes(userId);
         return like;
     }
 
     //Get UsersLiked and LikedBy
     public async Task<IEnumerable<LikeDto>> GetUserLikes(int userId, string predicate)
     {
-        var users = await _likeRepo.GetUserLikes(userId, predicate);
+        var users = await _uow.LikesRepo.GetUserLikes(userId, predicate);
         return users;
     }
 
     //Get UsersLiked and LikedBy
     public async Task<PagedList<LikeDto>> GetUserLikes(LikeSearchParamDto search)
     {
-        var users = await _likeRepo.GetUserLikes(search);
+        var users = await _uow.LikesRepo.GetUserLikes(search);
         return users;
     }
 
@@ -49,19 +47,19 @@ public class LikesBusinessLogic : ILikesBusinessLogic
     public async Task<BusinessResponse> AddLike(int userId, UserClaimGetDto claims)
     {
         //get source user
-        var sourceUser = await _likeRepo.GetUserWithLikes(claims.Id);
+        var sourceUser = await _uow.LikesRepo.GetUserWithLikes(claims.Id);
         if(sourceUser == null)
             return new BusinessResponse(HttpStatusCode.NotFound, "Logged in user not found");
 
         //get likedUser
-        var likedUser = await _userRepo.GetUserAsync(userId, includePhotos: false);        
+        var likedUser = await _uow.UserRepo.GetUserAsync(userId, includePhotos: false);        
         if(likedUser == null)
            return new BusinessResponse(HttpStatusCode.NotFound, "Liked user not found");         
 
         if(likedUser.UserName == sourceUser.UserName)
             return new BusinessResponse(HttpStatusCode.BadRequest, "You cannot like your self");
 
-        var userLike = await _likeRepo.GetUserLike(sourceUser.Id, likedUser.Id);
+        var userLike = await _uow.LikesRepo.GetUserLike(sourceUser.Id, likedUser.Id);
         if(userLike != null)
             return new BusinessResponse(HttpStatusCode.BadRequest, "You already liked this user");
 
@@ -69,7 +67,7 @@ public class LikesBusinessLogic : ILikesBusinessLogic
         userLike = new UserLike(){ SourceUserId = sourceUser.Id, TargetUserId = likedUser.Id };
         if(sourceUser.LikedUsers == null) sourceUser.LikedUsers = new List<UserLike>();
         sourceUser.LikedUsers.Add(userLike);
-        if(await _userRepo.SaveAllAsync())
+        if(await _uow.SaveChangesAsync())
             return new BusinessResponse(HttpStatusCode.OK);
 
         return new BusinessResponse(HttpStatusCode.BadRequest, "Unable to add like");
