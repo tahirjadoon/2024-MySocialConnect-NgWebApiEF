@@ -65,6 +65,8 @@ public static class AppServiceExtensions
         services.AddSingleton<PresenceTrackerMemory>();
         services.AddScoped<ISignalRRepository, SignalRRepository>();
         services.AddScoped<ISignalRBusinessLogic, SignalRBusinessLogic>();
+        services.AddScoped<IPhotoRepository, PhotoRepository>();
+        services.AddScoped<IPhotoBusinessLogic, PhotoBusinessLogic>();
 
         services.AddScoped<IUnitOfWork, UnitOfWork>();
 

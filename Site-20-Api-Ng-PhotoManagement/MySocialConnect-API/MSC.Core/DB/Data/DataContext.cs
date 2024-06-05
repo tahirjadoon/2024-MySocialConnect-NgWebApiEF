@@ -49,6 +49,9 @@ public class DataContext : IdentityDbContext<AppUser, //class we created
 
     public DbSet<SignalRConnection> SignalRConnections { get; set; }
 
+    //for photos after adding photo management. Before it was getting created due to use in AppUser
+    public DbSet<Photo> Photos {get; set;}
+
     //override OnModelCreating to create the relationshops for the likes
     //give entities some configuration
     protected override void OnModelCreating(ModelBuilder builder)
@@ -60,6 +63,9 @@ public class DataContext : IdentityDbContext<AppUser, //class we created
 
         UserLikeSetup(builder);
         UserMessageSetup(builder);
+
+        //after photo managemnt, Add a Query filter to only return approved photos
+        UserPhotoSetup(builder);
     }
 
     //IR_REFATCOR Many to Many relationship
@@ -129,5 +135,12 @@ public class DataContext : IdentityDbContext<AppUser, //class we created
             .HasForeignKey(s => s.SenderId)
             .OnDelete(DeleteBehavior.Cascade)
         ;
+    }
+
+    //add with photo management
+    private void UserPhotoSetup(ModelBuilder builder)
+    {
+        //Add a Query filter to only return approved photos
+        builder.Entity<Photo>().HasQueryFilter(p => p.IsApproved);
     }
 }

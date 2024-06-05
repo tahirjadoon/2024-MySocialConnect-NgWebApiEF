@@ -10,6 +10,8 @@ public interface IUnitOfWork
     IMessageRepository MessageRepo {get;}
     ISignalRRepository SignalRRepo {get;}
 
+    IPhotoRepository PhotoRepo {get;}
+
     Task<bool> SaveChangesAsync();
     bool HasChanges();
 }

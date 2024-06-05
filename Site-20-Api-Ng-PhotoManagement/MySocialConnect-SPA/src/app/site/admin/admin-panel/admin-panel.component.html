@@ -9,9 +9,13 @@
             </div>
         </tab>
         
-        <tab heading="Photo Management" *appIsInRole="[zRole.Admin, zRole.Moderator]">
+        <!--
+            as soon as the user lands on the tab the data gets pulled 
+            only pull data when the user has clicked on the tab
+        -->
+        <tab heading="Photo Management" #photoTab="tab" *appIsInRole="[zRole.Admin, zRole.Moderator]">
             <div class="container">
-                <app-photo-management></app-photo-management>
+                <app-photo-management *ngIf="photoTab.active"></app-photo-management>
             </div>
         </tab>
 

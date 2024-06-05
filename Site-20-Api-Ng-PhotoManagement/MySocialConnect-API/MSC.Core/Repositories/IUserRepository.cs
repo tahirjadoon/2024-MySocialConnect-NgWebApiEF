@@ -24,15 +24,18 @@ public interface IUserRepository
 
     Task<AppUser> GetUserAsync(int id, bool includePhotos = false);
     //same as above "GetUsersAsync" but using auto mapper queryable extensions
-    Task<UserDto> GetUserAMQEAsync(int id);
+    //Need to Ignore Query filter for the current user as setup via DataContext
+    Task<UserDto> GetUserAMQEAsync(int id, bool isCurrentUser);
 
     Task<AppUser> GetUserAsync(string userName);
     //same as above "GetUserAsync" but using auto mapper queryable extensions
-    Task<UserDto> GetUserAMQEAsync(string userName);
+    //Need to Ignore Query filter for the current user as setup via DataContext
+    Task<UserDto> GetUserAMQEAsync(string userName, bool isCurrentUser);
 
     Task<AppUser> GetUserAsync(Guid guid);
     //same as above "GetUserAsync" but using auto mapper queryable extensions
-    Task<UserDto> GetUserAMQEAsync(Guid guid);
+    //Need to Ignore Query filter for the current user as setup via DataContext
+    Task<UserDto> GetUserAMQEAsync(Guid guid, bool isCurrentUser);
 
     Task<bool> UserExists(string userName);
 
@@ -41,4 +44,6 @@ public interface IUserRepository
     void RegisterUser(AppUser appUser);
 
     Task<string> GetUserGenderAsync(Guid guid);
+
+    Task<AppUser> GetUserByPhotoIdAsync(int photoId);
 }

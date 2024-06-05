@@ -14,6 +14,7 @@ public class AutoMapperProfiles : Profile
     {
         Map_AppUser_To_UserDto();
         Map_Photo_To_PhotoDto();
+        Map_Photo_To_PhotoForApproval();
         Map_AppUser_To_LoggedInUserDto();
         Map_UserRegisterDto_To_AppUser();
         Map_MemberUpdateDto_To_AppUser();
@@ -44,6 +45,16 @@ public class AutoMapperProfiles : Profile
     private void Map_Photo_To_PhotoDto()
     {
         CreateMap<Photo, PhotoDto>();
+    }
+
+    private void Map_Photo_To_PhotoForApproval()
+    {
+        //the rest of the properties will be auto mapped
+        CreateMap<Photo, PhotoForApprovalDto>()
+                .ForMember(dest => dest.UserGuid, opt => opt.MapFrom(src => src.AppUser.Guid))
+                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.AppUser.UserName))
+                .ForMember(dest => dest.UserId, opt=> opt.MapFrom(src => src.AppUser.Id))
+                ;
     }
 
     private void Map_AppUser_To_LoggedInUserDto()

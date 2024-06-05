@@ -1,10 +1,14 @@
 import { Injectable } from '@angular/core';
+import { HttpParams } from '@angular/common/http';
+
 import { HelperService } from './helper.service';
 import { HttpClientService } from './http-client.service';
+
 import { UserDto } from '../models-interfaces/user-dto.model';
 import { SiteRole } from '../models-interfaces/site-role.model';
+import { PhotoForApprovalDto } from '../models-interfaces/photo-for-approval-dto.model';
+
 import { ZRoles } from '../enums/z-roles';
-import { HttpParams } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
@@ -64,5 +68,23 @@ export class AdminService {
     const paramsSet = new HttpParams().set("roles", roles.join(","));
     let httpOptions = { params: paramsSet };
     return this.httpClientService.post<string[]>(url, {}, httpOptions);
+  }
+
+  getPhotosForApproval(){
+    const url = this.helperService.urlAdminGetPhotosToModerate;
+    this.helperService.logIfFrom(url, "AdminService getPhotosForApproval");
+    return this.httpClientService.get<PhotoForApprovalDto[]>(url);
+  }
+
+  approvePhoto(photoId: number){
+    const url = this.helperService.replaceKeyValue(this.helperService.urlAdminApprovePhoto, this.helperService.keyPhotoId, photoId);
+    this.helperService.logIfFrom(url, "AdminService approvePhoto");
+    return this.httpClientService.put<any>(url, {});
+  }
+
+  rejectPhoto(photoId: number){
+    const url = this.helperService.replaceKeyValue(this.helperService.urlAdminRejectPhoto, this.helperService.keyPhotoId, photoId);
+    this.helperService.logIfFrom(url, "AdminService rejectPhoto");
+    return this.httpClientService.put<any>(url, {});
   }
 }

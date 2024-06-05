@@ -4,3 +4,20 @@
 input[type=file]{
     color: transparent;
 }
+
+.img-wrapper-approval{
+    position: relative;
+}
+
+.not-approved {
+    opacity: 0.2;
+}
+
+.img-text-approval {
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    bottom: 30%;
+}

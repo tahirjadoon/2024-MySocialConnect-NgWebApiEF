@@ -22,15 +22,18 @@ public interface IUserBusinessLogic
 
     Task<UserDto> GetUserAsync(int id);
     //same as above "GetUserAsync" but using auto mapper queryable extensions
-    Task<UserDto> GetUserAMQEAsync(int id);
+    //for ignoring Query filter for the current user as setup via DataContext
+    Task<UserDto> GetUserAMQEAsync(int id, UserClaimGetDto claims);
 
     Task<UserDto> GetUserAsync(string userName);
     //same as above "GetUserAsync" but using auto mapper queryable extensions
-    Task<UserDto> GetUserAMQEAsync(string userName);
+    //for ignoring Query filter for the current user as setup via DataContext
+    Task<UserDto> GetUserAMQEAsync(string userName, UserClaimGetDto claims);
 
     Task<UserDto> GetUserAsync(Guid guid);
     //same as above "GetUserAsync" but using auto mapper queryable extensions
-    Task<UserDto> GetUserAMQEAsync(Guid guid);
+    //for ignoring Query filter for the current user as setup via DataContext
+    Task<UserDto> GetUserAMQEAsync(Guid guid, UserClaimGetDto claims);
 
     Task<bool> UserExists(string userName);
 

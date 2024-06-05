@@ -96,9 +96,11 @@ public class UserBusinessLogic : IUserBusinessLogic
     }
 
     //same as above "GetUserAsync" but using auto mapper queryable extensions
-    public async Task<UserDto> GetUserAMQEAsync(int id)
+    //for ignoring Query filter for the current user as setup via DataContext
+    public async Task<UserDto> GetUserAMQEAsync(int id, UserClaimGetDto claims)
     {
-        var user = await _uow.UserRepo.GetUserAMQEAsync(id);
+        var isCurrent = claims != null && claims.Id == id;
+        var user = await _uow.UserRepo.GetUserAMQEAsync(id, isCurrent);
         if(user == null) return null;
         return user;
     }
@@ -117,9 +119,11 @@ public class UserBusinessLogic : IUserBusinessLogic
     }
 
     //same as above "GetUserAsync" but using auto mapper queryable extensions
-    public async Task<UserDto> GetUserAMQEAsync(string userName)
+    //for ignoring Query filter for the current user as setup via DataContext
+    public async Task<UserDto> GetUserAMQEAsync(string userName, UserClaimGetDto claims)
     {
-        var user = await _uow.UserRepo.GetUserAMQEAsync(userName);
+        var isCurrent = claims != null && claims.UserName.ToLower() == userName.ToLower();
+        var user = await _uow.UserRepo.GetUserAMQEAsync(userName, isCurrent);
         if(user == null) return null;
         return user;
     }
@@ -138,9 +142,11 @@ public class UserBusinessLogic : IUserBusinessLogic
     }
 
     //same as above "GetUserAsync" but using auto mapper queryable extensions
-    public async Task<UserDto> GetUserAMQEAsync(Guid guid)
+    //for ignoring Query filter for the current user as setup via DataContext
+    public async Task<UserDto> GetUserAMQEAsync(Guid guid, UserClaimGetDto claims)
     {
-        var user = await _uow.UserRepo.GetUserAMQEAsync(guid);
+        var isCurrent = claims != null && claims.Guid == guid;
+        var user = await _uow.UserRepo.GetUserAMQEAsync(guid, isCurrent);
         if(user == null) return null;
         return user;
     }
@@ -295,8 +301,9 @@ public class UserBusinessLogic : IUserBusinessLogic
         var photo = new Photo
         {
             Url = result.SecureUrl.AbsoluteUri, //set photo url
-            PublicId = result.PublicId, //setup public id
-            IsMain = appUser.Photos == null || !appUser.Photos.Any() //mark it active
+            PublicId = result.PublicId //setup public id
+            //cannot make unapproved photo as main
+            //IsMain = appUser.Photos == null || !appUser.Photos.Any() //mark it active
         };
 
         //add the photo
@@ -315,8 +322,38 @@ public class UserBusinessLogic : IUserBusinessLogic
         if (appUser == null)
             throw new UnauthorizedAccessException("User not found");
 
-        var response = new BusinessResponse();
+        //user should be able to delete non approved photos
+        //above user method will not be able to pull non approved photos due to 
+        //queryFilter is applied via DataContext.UserPhotoSetup
+        var photo = await _uow.PhotoRepo.GetPhotoByIdAsync(photoId);
+        if(photo == null)
+            return new BusinessResponse(HttpStatusCode.NotFound, "Photo Not found", null);
+        
+        if(photo.IsMain) 
+            return new BusinessResponse(HttpStatusCode.BadRequest, "You cannot delete your main photo", null);
 
+        //delete from cludinary
+        if(!string.IsNullOrWhiteSpace(photo.PublicId))
+        {
+            var result = await _photoService.DeletePhotoAync(photo.PublicId);
+            if(result.Error != null)
+            {
+                return new BusinessResponse(HttpStatusCode.BadRequest, result.Error?.Message ?? "Unable to delete photo from service", null);
+            }
+        }
+
+        //remove from data base 
+        appUser.Photos.Remove(photo);
+
+        if(await _uow.SaveChangesAsync())
+        {
+            return new BusinessResponse(HttpStatusCode.OK, "Photo removed successfully", null);
+        }
+
+        return new BusinessResponse(HttpStatusCode.BadRequest, "Unable to delete photo", null);
+        
+        /*
+        var response = new BusinessResponse();
         var photo = appUser.Photos?.FirstOrDefault(x => x.Id == photoId);
         if(photo == null)
         {
@@ -357,6 +394,7 @@ public class UserBusinessLogic : IUserBusinessLogic
         response.HttpStatusCode = HttpStatusCode.BadRequest;
         response.Message = "Unable to delete photo";
         return response;
+        */
     }
 
     public async Task<bool> SetPhotoMainAsync(int photoId, UserClaimGetDto claims)

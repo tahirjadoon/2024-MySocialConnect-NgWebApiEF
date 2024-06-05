@@ -128,12 +128,20 @@ public class UserRepository : IUserRepository
     }
 
     //same as above "GetUserAsync" but using auto mapper queryable extensions
-    public async Task<UserDto> GetUserAMQEAsync(int id)
+     //Need to Ignore Query filter for the current user as setup via DataContext
+    public async Task<UserDto> GetUserAMQEAsync(int id, bool isCurrentUser)
     {
-        var user = await _context.Users
+        /*var user = await _context.Users
                     .Where(x => x.Id == id)
                     .ProjectTo<UserDto>(_mapper.ConfigurationProvider)
-                    .FirstOrDefaultAsync();
+                    .FirstOrDefaultAsync();*/
+
+        var query = _context.Users
+                    .Where(x => x.Id == id)
+                    .ProjectTo<UserDto>(_mapper.ConfigurationProvider)
+                    .AsQueryable();
+        if(isCurrentUser) query = query.IgnoreQueryFilters();
+        var user = await query.FirstOrDefaultAsync();
         return user;
     }
 
@@ -147,12 +155,19 @@ public class UserRepository : IUserRepository
     }
 
     //same as above "GetUserAsync" but using auto mapper queryable extensions
-    public async Task<UserDto> GetUserAMQEAsync(string userName)
+    //Need to Ignore Query filter for the current user as setup via DataContext
+    public async Task<UserDto> GetUserAMQEAsync(string userName, bool isCurrentUser)
     {
-        var user = await _context.Users
+        /*var user = await _context.Users
                     .Where(x => x.UserName.ToLower() == userName.ToLower())
                     .ProjectTo<UserDto>(_mapper.ConfigurationProvider)
-                    .FirstOrDefaultAsync();
+                    .FirstOrDefaultAsync();*/
+        var query =  _context.Users
+                    .Where(x => x.UserName.ToLower() == userName.ToLower())
+                    .ProjectTo<UserDto>(_mapper.ConfigurationProvider)
+                    .AsQueryable();
+        if(isCurrentUser) query = query.IgnoreQueryFilters();
+        var user = await query.FirstOrDefaultAsync();
         return user;
     }
 
@@ -167,12 +182,19 @@ public class UserRepository : IUserRepository
     }
 
     //same as above "GetUserAsync" but using auto mapper queryable extensions
-    public async Task<UserDto> GetUserAMQEAsync(Guid guid)
+     //Need to Ignore Query filter for the current user as setup via DataContext
+    public async Task<UserDto> GetUserAMQEAsync(Guid guid, bool isCurrentUser)
     {
-        var user = await _context.Users
+        /*var user = await _context.Users
                     .Where(x => x.Guid == guid)
                     .ProjectTo<UserDto>(_mapper.ConfigurationProvider)
-                    .FirstOrDefaultAsync();
+                    .FirstOrDefaultAsync();*/
+        var query = _context.Users
+                    .Where(x => x.Guid == guid)
+                    .ProjectTo<UserDto>(_mapper.ConfigurationProvider)
+                    .AsQueryable();
+        if(isCurrentUser) query = query.IgnoreQueryFilters();
+        var user = await query.FirstOrDefaultAsync();
         return user;
     }
 
@@ -180,6 +202,16 @@ public class UserRepository : IUserRepository
     {
         var gender = await _context.Users.Where(x => x.Guid == guid).Select(x => x.Gender).FirstOrDefaultAsync();
         return gender;
+    }
+
+    public async Task<AppUser> GetUserByPhotoIdAsync(int photoId)
+    {
+        var user = await _context.Users
+                        .Include(p => p.Photos)
+                        .IgnoreQueryFilters()
+                        .Where(p => p.Photos.Any(x => x.Id == photoId))
+                        .FirstOrDefaultAsync();
+        return user;
     }
 
     #endregion Get Users

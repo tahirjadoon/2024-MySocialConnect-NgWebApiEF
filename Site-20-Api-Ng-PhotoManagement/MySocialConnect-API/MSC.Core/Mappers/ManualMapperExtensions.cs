@@ -114,8 +114,8 @@ public static class ManualMapperExtensions
         {
             Id = photo.Id,
             Url = photo.Url,
-            IsMain = photo.IsMain,
-            PublicId = photo.PublicId
+            IsMain = photo.IsMain
+            //PublicId = photo.PublicId
         };
         return photoDto;
     }

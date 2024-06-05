@@ -11,16 +11,19 @@ public class UnitOfWork : IUnitOfWork
     private readonly ILikesRepository _likesRepo;
     private readonly IMessageRepository _msgRepo;
     private readonly ISignalRRepository _sigrRepo;
+    private readonly IPhotoRepository _photoRepo;
 
     public UnitOfWork(DataContext context, 
                         IUserRepository userRepo, ILikesRepository likesRepo, 
-                        IMessageRepository msgRepo, ISignalRRepository sigrRepo)
+                        IMessageRepository msgRepo, ISignalRRepository sigrRepo, 
+                        IPhotoRepository photoRepo)
     {
         _context = context;
         _userRepo = userRepo;
         _likesRepo = likesRepo;
         _msgRepo = msgRepo;
         _sigrRepo = sigrRepo;
+        _photoRepo = photoRepo;
     }
 
     public IUserRepository UserRepo => _userRepo;
@@ -30,6 +33,8 @@ public class UnitOfWork : IUnitOfWork
     public IMessageRepository MessageRepo => _msgRepo;
 
     public ISignalRRepository SignalRRepo => _sigrRepo;
+
+    public IPhotoRepository PhotoRepo => _photoRepo;
 
     public async Task<bool> SaveChangesAsync()
     {

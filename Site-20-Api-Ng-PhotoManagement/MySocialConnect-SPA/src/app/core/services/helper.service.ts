@@ -97,6 +97,9 @@ export class HelperService {
   public urlAdminGetUsersWithRoles: string = `${this.urlAdmin}/users-with-roles`;
   public urlAdminGetPhotosToModerate: string = `${this.urlAdmin}/photos-to-moderate`;
   public urlAdminEditRoles: string = `${this.urlAdmin}/edit-roles/${this.keyGuid}`;
+  public urlAdminApprovePhoto: string = `${this.urlAdmin}/photo-to-approve/${this.keyPhotoId}`;
+  public urlAdminRejectPhoto: string = `${this.urlAdmin}/photo-to-reject/${this.keyPhotoId}`;
+
 
   //signalr end points
   public urlSignalrPresence: string = `${this.baseUrlHub}presence`;

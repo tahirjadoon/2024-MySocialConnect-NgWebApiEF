@@ -1,9 +1,25 @@
 <div class="row mb-2" *ngIf="member">
-    <div class="col-2 mb-1" *ngFor="let photo of member?.photos">
-        <img src="{{photo.url}}" alt="Photo of user" class="img-thumbnail mb-1">
+    <!--
+        In the photo-editor when a user uploads photos ensure that some text is positioned 
+        absolutely on any currently unapproved photos as “awaiting approval” in red. Also 
+        reduce the opacity to 0.2 for any unapproved photos.
+        
+        with photo approval add classes 
+        div = img-wrapper-approval
+        img = not-approved
+
+        div awaiting approval
+    -->
+    <div class="col-2 mb-1 img-wrapper-approval" *ngFor="let photo of member?.photos">
+        <img src="{{photo.url}}" alt="Photo of user" class="img-thumbnail mb-1" 
+            [class.not-approved]="!photo.isApproved">
+        <div class="text-center img-text-approval" *ngIf="!photo.isApproved">
+            <span class="text-danger">Awaiting approval</span>
+        </div>
         <div class="text-center">
+            <!--do not let the user make it main when not approved-->
             <button class="btn btn-sm" 
-                [disabled]="photo.isMain" 
+                [disabled]="photo.isMain || !photo.isApproved" 
                 (click)="onSetMainPhoto(photo)"
                 [ngClass]="photo.isMain ? 'btn-success active' : 'btn-outline-success'">
                 Main</button>

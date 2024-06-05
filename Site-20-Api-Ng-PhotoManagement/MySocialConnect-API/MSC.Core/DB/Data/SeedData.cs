@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
@@ -114,6 +113,11 @@ public class SeedData
 
         //convert the username to lower case
         foreach(var user in users){
+            //with photo managment, make the first photo isApproved
+            if(user.Photos != null && user.Photos.Any()){
+                user.Photos.First().IsApproved = true;
+            }
+
             user.UserName = user.UserName.ToLowerInvariant();
             await userManager.CreateAsync(user, defaultPassword); //will save as well. 
             //add the user to Member Role

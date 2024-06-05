@@ -58,7 +58,7 @@ public class UsersController : BaseApiController
     public async Task<ActionResult<UserDto>> GetUser(int id)
     {
         //var user = await _userBusinessLogic.GetUserAsync(id);
-        var user = await _userBusinessLogic.GetUserAMQEAsync(id);
+        var user = await _userBusinessLogic.GetUserAMQEAsync(id, User.GetUserClaims());
         if (user == null)
         {
             return NotFound($"No user found by id {id}");
@@ -71,7 +71,7 @@ public class UsersController : BaseApiController
     public async Task<ActionResult<UserDto>> GetUser(string userName)
     {
         //var user = await _userBusinessLogic.GetUserAsync(userName);
-        var user = await _userBusinessLogic.GetUserAMQEAsync(userName);
+        var user = await _userBusinessLogic.GetUserAMQEAsync(userName, User.GetUserClaims());
         if (user == null)
         {
             return NotFound($"No user found by name {userName}");
@@ -83,7 +83,7 @@ public class UsersController : BaseApiController
     public async Task<ActionResult<UserDto>> GetUser(Guid guid)
     {
         //var user = await _userBusinessLogic.GetUserAsync(guid);
-        var user = await _userBusinessLogic.GetUserAMQEAsync(guid);
+        var user = await _userBusinessLogic.GetUserAMQEAsync(guid, User.GetUserClaims());
         if (user == null)
         {
             return NotFound($"No user found by guid {guid}");

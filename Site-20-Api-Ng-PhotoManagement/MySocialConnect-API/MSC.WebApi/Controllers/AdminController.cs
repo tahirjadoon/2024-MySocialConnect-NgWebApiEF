@@ -5,8 +5,10 @@ using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 using MSC.Core.BusinessLogic;
 using MSC.Core.Constants;
+using MSC.Core.Dtos;
 using MSC.Core.Extensions;
 
 namespace MSC.WebApi.Controller;
@@ -14,10 +16,12 @@ namespace MSC.WebApi.Controller;
 public class AdminController : BaseApiController
 {
     private readonly IUserBusinessLogic _userBl;
+    private readonly IPhotoBusinessLogic _photoBl;
 
-    public AdminController(IUserBusinessLogic _userBl)
+    public AdminController(IUserBusinessLogic _userBl, IPhotoBusinessLogic _photoBl)
     {
         this._userBl = _userBl;
+        this._photoBl = _photoBl;
     }
 
     [Authorize(Policy = SiteIdentityConstants.AuthPolicy_Admin)]
@@ -28,13 +32,6 @@ public class AdminController : BaseApiController
         if(users == null || !users.Any())
             return NotFound("No users found");
         return Ok(users);
-    }
-
-    [Authorize(Policy = SiteIdentityConstants.AuthPolicy_Moderator_Photos)]
-    [HttpGet("photos-to-moderate")]
-    public ActionResult GetPhotosForModeration()
-    {
-        return Ok("Admins or moderators can see this");
     }
 
     [Authorize(Policy = SiteIdentityConstants.AuthPolicy_Admin)]
@@ -59,6 +56,45 @@ public class AdminController : BaseApiController
             _ => BadRequest("Unable to edit roles")
         };
 
+        return actionResult;
+    }
+
+    [Authorize(Policy = SiteIdentityConstants.AuthPolicy_Moderator_Photos)]
+    [HttpGet("photos-to-moderate")]
+    public async Task<ActionResult<IEnumerable<PhotoForApprovalDto>>> GetPhotosForModeration()
+    {
+        var photos = await _photoBl.GetUnapprovedPhotosAsync();
+        if(photos == null || !photos.Any())
+            return NoContent();
+
+        return Ok(photos);
+    }
+
+    [Authorize(Policy = SiteIdentityConstants.AuthPolicy_Moderator_Photos)]
+    [HttpPut("photo-to-approve/{photoId}")]
+    public async Task<ActionResult> ApprovePhoto([FromRoute]int photoId)
+    {
+        var result = await _photoBl.ApprovePhotoAsync(photoId);
+        ActionResult actionResult = result.HttpStatusCode switch{
+            HttpStatusCode.OK => Ok(),
+            HttpStatusCode.BadRequest => BadRequest(result.Message),
+            HttpStatusCode.NotFound => NotFound(result.Message),
+            _ => BadRequest("Unable to approve photo")
+        };
+        return actionResult;
+    }
+
+    [Authorize(Policy = SiteIdentityConstants.AuthPolicy_Moderator_Photos)]
+    [HttpPut("photo-to-reject/{photoId}")]
+    public async Task<ActionResult> RejectPhoto([FromRoute]int photoId)
+    {
+        var result = await _photoBl.RemovePhotoAsync(photoId);
+        ActionResult actionResult = result.HttpStatusCode switch{
+            HttpStatusCode.OK => Ok(),
+            HttpStatusCode.BadRequest => BadRequest(result.Message),
+            HttpStatusCode.NotFound => NotFound(result.Message),
+            _ => BadRequest("Unable to reject photo")
+        };
         return actionResult;
     }
 }
