@@ -1,0 +1,52 @@
+<div class="card">
+    <div class="card-body">
+        <div *ngIf="messagesIn.length === 0">No messages yet... say hi by using the message box below</div>
+
+        <!--for scrolling the messages set the 
+            template reference variable
+            style it
+            use angular function ScrollTop
+         -->
+        <ul #scrollMemberMessages
+            style="overflow: scroll; height: 500px;"
+            [scrollTop]="scrollMemberMessages.scrollHeight"
+            *ngIf="messagesIn.length > 0" class="chat">
+            <li *ngFor="let message of messagesIn">
+                <div>
+                    <span class="chat-img float-end">
+                        <img class="rounded-circle" src="{{message.senderPhotoUrl || './assets/user.png'}}" alt="image of user">
+                    </span>
+                    <div class="chat-body">
+                        <div class="header">
+                            <small class="text-muted">
+                                <span class="fa fa-clock-o">&nbsp;{{ message.dateMessageSent | timeago }}</span> 
+                                <!--message not read where user is not the sender-->
+                                <span class="text-danger" *ngIf="!message.dateMessageRead && message.senderId !== memberIn.id">
+                                (unread)
+                                </span>
+                                <!--message read where user is not the sender-->
+                                <span class="text-success" *ngIf="message.dateMessageRead && message.senderId !== memberIn.id">
+                                    (read {{ message.dateMessageRead | timeago }})
+                                </span>
+                            </small>
+                        </div>
+                        <p>{{ message.messageContent }}</p>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+
+    <div class="card-footer">
+        <form #messageForm="ngForm" (ngSubmit)="OnSubmitMessageUsingHub()" autocomplete="off">
+            <div class="input-group">
+                <input type="text" class="form-control input-sm" placeholder="Send a private message" 
+                    name="messageContent" [(ngModel)]="messageContent" required> 
+                <div class="input-group-append">
+                    <button class="btn btn-primary ms-2 me-1" type="submit" [disabled]="!messageForm.valid">Send</button>
+                    <button class="btn btn-info" type="reset" [disabled]="!messageContent || messageContent === ''">Clear</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,121 @@
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { HttpClientModule } from '@angular/common/http';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
+import { TabsModule } from 'ngx-bootstrap/tabs';
+import { ToastrModule } from 'ngx-toastr';
+import { NgxSpinnerModule } from 'ngx-spinner';
+import { FileUploadModule } from 'ng2-file-upload';
+import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
+import { PaginationModule } from 'ngx-bootstrap/pagination';
+import { ButtonsModule } from 'ngx-bootstrap/buttons';
+import { TimeagoModule } from 'ngx-timeago';
+import { ModalModule } from 'ngx-bootstrap/modal';
+
+//app routing module
+import { AppRoutingModule } from '../../app-routing.module';
+
+//directive for using the validator in template driven forms
+import { MustMatchDirective } from '../directives/must-match.directive';
+import { PasswordStrengthDirective } from '../directives/password-strength.directive';
+import { UserNameAllowedDirective } from '../directives/user-name-allowed.directive';
+import { UserNameCheckDirective } from '../directives/user-name-check.directive';
+
+//components
+import { HomeComponent } from '../../site/home/home.component';
+import { RegisterComponent } from '../../site/register/register.component';
+import { MemberListComponent } from '../../site/members/member-list/member-list.component';
+import { MemberDetailComponent } from '../../site/members/member-detail/member-detail.component';
+import { ListsComponent } from '../../site/lists/lists.component';
+import { MessagesComponent } from '../../site/messages/messages.component';
+import { MemberCardComponent } from '../../site/members/member-card/member-card.component';
+import { MemberEditComponent } from '../../site/members/member-edit/member-edit.component';
+import { PhotoEditorComponent } from '../../site/members/photo-editor/photo-editor.component';
+import { NotLoggedInComponent } from '../../site/errors/not-logged-in/not-logged-in.component';
+
+import { RegisterReactiveformComponent } from '../../site/register-reactiveform/register-reactiveform.component';
+import { RegisterReactiveformReusablecontrolsComponent } from '../../site/register-reactiveform-reusablecontrols/register-reactiveform-reusablecontrols.component';
+
+import { SampleComponent } from '../../site/errors/sample/sample.component';
+import { DisplayFgerrorsComponent } from '../../site/errors/display-fgerrors/display-fgerrors.component';
+
+import { TextInputComponent } from '../../site/formControls/text-input/text-input.component';
+import { DateInputComponent } from '../../site/formControls/date-input/date-input.component';
+import { AdminPanelComponent } from '../../site/admin/admin-panel/admin-panel.component';
+import { UserManagementComponent } from '../../site/admin/user-management/user-management.component';
+import { PhotoManagementComponent } from '../../site/admin/photo-management/photo-management.component';
+
+//directive for limiting the admin link
+import { IsInRoleDirective } from '../directives/is-in-role.directive';
+import { RolesModalComponent } from '../../site/modals/roles-modal/roles-modal.component';
+import { ConfirmModalComponent } from '../../site/modals/confirm-modal/confirm-modal.component';
+
+@NgModule({
+  declarations: [
+    MustMatchDirective, //for validation template driven form
+    PasswordStrengthDirective, //for validation template driven form
+    UserNameAllowedDirective, //for validation template driven form
+    UserNameCheckDirective, //for validation template driven form
+    HomeComponent,
+    RegisterComponent, //template driven form
+    RegisterReactiveformComponent, //reactive form
+    RegisterReactiveformReusablecontrolsComponent, //reactive form
+    MemberListComponent, 
+    //MemberDetailComponent, this is now a stand alone component so due ng-gallery which is stand alone
+    ListsComponent, 
+    MessagesComponent, 
+    MemberCardComponent, 
+    MemberEditComponent, 
+    PhotoEditorComponent, 
+    NotLoggedInComponent, 
+    DisplayFgerrorsComponent,
+    SampleComponent,
+    TextInputComponent,
+    DateInputComponent,
+    AdminPanelComponent,
+    UserManagementComponent,
+    PhotoManagementComponent,
+    IsInRoleDirective,
+    RolesModalComponent,
+    ConfirmModalComponent, //directive for checking roles to handle the admin link, add to export as well
+  ],
+  imports: [
+    CommonModule,
+    AppRoutingModule,
+    BrowserAnimationsModule,
+    HttpClientModule, 
+    FormsModule, 
+    ReactiveFormsModule, 
+    BsDropdownModule.forRoot(),
+    TabsModule.forRoot(),
+    ToastrModule.forRoot({ positionClass: 'toast-bottom-right'}),
+    NgxSpinnerModule.forRoot({type: 'line-scale-party'}), 
+    FileUploadModule,
+    BsDatepickerModule.forRoot(),
+    PaginationModule.forRoot(),
+    ButtonsModule.forRoot(),
+    TimeagoModule.forRoot(),
+    ModalModule.forRoot(),
+  ],
+  exports: [
+    AppRoutingModule,
+    BrowserAnimationsModule,
+    HttpClientModule, 
+    FormsModule, 
+    ReactiveFormsModule, 
+    BsDropdownModule,
+    TabsModule,
+    ToastrModule,
+    NgxSpinnerModule,
+    FileUploadModule,
+    BsDatepickerModule,
+    PaginationModule,
+    ButtonsModule,
+    TimeagoModule,
+    ModalModule,
+    IsInRoleDirective,
+  ]
+})
+export class SharedModule { }
