@@ -1,9 +1,10 @@
-import { ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { TimeagoModule } from 'ngx-timeago';
 import { ToastrService } from 'ngx-toastr';
 import { CommonModule } from '@angular/common';
 
+import { HelperService } from '../../../core/services/helper.service';
 import { MessageService } from '../../../core/services/message.service';
 import { MessageHubService } from '../../../core/services/signalr/message-hub.service';
 
@@ -11,6 +12,7 @@ import { MessageDto } from '../../../core/models-interfaces/message-dto.model';
 
 import { UserDto } from '../../../core/models-interfaces/user-dto.model';
 import { FormsModule, NgForm } from '@angular/forms';
+
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush, //due to scrolling the messages
@@ -20,14 +22,17 @@ import { FormsModule, NgForm } from '@angular/forms';
   styleUrls: ['./member-messages.component.css'],
   imports: [CommonModule, TimeagoModule, FormsModule]
 })
-export class MemberMessagesComponent implements OnInit, OnDestroy {
+export class MemberMessagesComponent implements OnInit, OnDestroy, AfterViewInit {
+
+  isLoading = false;
 
   //messge template driven form
   @ViewChild('messageForm') msgForm!: NgForm;
 
   @Input() memberIn!:UserDto;
   //not passing the messages any more after message hub iplementation
-  @Input() messagesIn: MessageDto[] = [];
+  //@Input() 
+  messagesIn: MessageDto[] = [];
 
   messageContent: string = '';
 
@@ -36,7 +41,9 @@ export class MemberMessagesComponent implements OnInit, OnDestroy {
 
   constructor(private messageService: MessageService, 
               private toastr: ToastrService, 
-              private messageHubService: MessageHubService){}
+              public messageHubService: MessageHubService,
+              private helperService: HelperService){}
+
 
   ngOnDestroy(): void {
     if(this.messageSubscription) this.messageSubscription.unsubscribe();
@@ -44,14 +51,21 @@ export class MemberMessagesComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    
+  }
+
+  ngAfterViewInit(): void {
     this.loadMessagesFromMessageHub();
   }
 
   loadMessagesFromMessageHub(){
-    this.messageHubSubscription = this.messageHubService.messageThread$.subscribe({
+    this.messageHubService.messageThread$.subscribe({
       next: (messages: MessageDto[]) => {
         //just use the input messages here
         this.messagesIn = messages;
+        
+        this.helperService.logIfFrom(this.messagesIn.length, "messages");
+        this.helperService.logIf(this.messagesIn);
       }
     })
   }
@@ -85,12 +99,16 @@ export class MemberMessagesComponent implements OnInit, OnDestroy {
       this.toastr.error('User error', 'Error');
       return;
     }
+
+    this.isLoading = true;
     //this is returning a promise
     //The newly added message will show via loadMessagesFromMessageHub 
     this.messageHubService.createMessage(this.memberIn.id, this.messageContent)
                           .then(() => {
                             this.msgForm.reset();
-                          });
+                          })
+                          .finally(() => this.isLoading = false )
+                          ;
 
   }
 

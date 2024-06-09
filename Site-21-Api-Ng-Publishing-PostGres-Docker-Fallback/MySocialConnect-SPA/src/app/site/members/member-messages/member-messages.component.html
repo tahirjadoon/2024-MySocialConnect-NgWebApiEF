@@ -1,16 +1,27 @@
+
+
 <div class="card">
-    <div class="card-body">
-        <div *ngIf="messagesIn.length === 0">No messages yet... say hi by using the message box below</div>
+    <div class="card-body"
+    #scrollMemberMessages
+    style="overflow: scroll; height: 500px;"
+    [scrollTop]="scrollMemberMessages.scrollHeight"      
+    >
+        <h3>Messages count: {{(messageHubService.messageThread$ | async)?.length}}</h3>
+        <div *ngIf="!messagesIn || messagesIn.length === 0">No messages yet... say hi by using the message box below</div>
 
         <!--for scrolling the messages set the 
             template reference variable
             style it
             use angular function ScrollTop
-         -->
-        <ul #scrollMemberMessages
+
+            due to a bug this has been moved up to the card-body
+
+            #scrollMemberMessages
             style="overflow: scroll; height: 500px;"
             [scrollTop]="scrollMemberMessages.scrollHeight"
-            *ngIf="messagesIn.length > 0" class="chat">
+         -->
+        <ul 
+            *ngIf="messagesIn && messagesIn.length > 0" class="chat">
             <li *ngFor="let message of messagesIn">
                 <div>
                     <span class="chat-img float-end">
@@ -43,7 +54,9 @@
                 <input type="text" class="form-control input-sm" placeholder="Send a private message" 
                     name="messageContent" [(ngModel)]="messageContent" required> 
                 <div class="input-group-append">
-                    <button class="btn btn-primary ms-2 me-1" type="submit" [disabled]="!messageForm.valid">Send</button>
+                    <button class="btn btn-primary ms-2 me-1" type="submit" 
+                        [disabled]="!messageForm.valid || isLoading">Send <i *ngIf="isLoading" class="fa fa-spinner fa-spin"></i>
+                    </button>
                     <button class="btn btn-info" type="reset" [disabled]="!messageContent || messageContent === ''">Clear</button>
                 </div>
             </div>

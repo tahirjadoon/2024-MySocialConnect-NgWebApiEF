@@ -32,6 +32,12 @@ MySocialConnect.db-shm
 MySocialConnect.db-wal
 
 ########################
+# wwwroot #
+########################
+## production build is getting pushed to MSC.WebApi/wwwroot folder
+wwwroot
+
+########################
 # Visual Studio DotNet #
 ########################
 

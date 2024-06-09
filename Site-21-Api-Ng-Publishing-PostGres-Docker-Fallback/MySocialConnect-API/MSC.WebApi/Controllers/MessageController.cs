@@ -8,9 +8,8 @@ using MSC.Core.BusinessLogic;
 using MSC.Core.Dtos;
 using MSC.Core.Dtos.Pagination;
 using MSC.Core.Extensions;
-using MSC.WebApi.Controller;
 
-namespace MSC.WebApi;
+namespace MSC.WebApi.Controllers;
 
 [Authorize]
 public class MessageController : BaseApiController

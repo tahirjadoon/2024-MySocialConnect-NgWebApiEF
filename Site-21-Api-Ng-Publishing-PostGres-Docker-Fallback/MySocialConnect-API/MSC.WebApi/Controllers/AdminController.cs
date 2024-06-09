@@ -5,13 +5,12 @@ using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 using MSC.Core.BusinessLogic;
 using MSC.Core.Constants;
 using MSC.Core.Dtos;
 using MSC.Core.Extensions;
 
-namespace MSC.WebApi.Controller;
+namespace MSC.WebApi.Controllers;
 
 public class AdminController : BaseApiController
 {

@@ -62,10 +62,15 @@ public class PresenceTrackerMemory
     }
 
     public Task<string[]> GetConnectionsForUser(string userName){
-        string[] connectionsIds;
+        List<string> connectionsIds = new List<string>();
         lock (_onlineUsers){
-            connectionsIds = _onlineUsers.GetValueOrDefault(userName).ToArray();
+            if(_onlineUsers.ContainsKey(userName))
+            {
+                connectionsIds = _onlineUsers.GetValueOrDefault(userName);
+                 return Task.FromResult(connectionsIds.ToArray());
+            }
         }
-        return Task.FromResult(connectionsIds);
+        //return Task.CompletedTask;
+        return Task.FromResult<string[]>(null);
     }
 }

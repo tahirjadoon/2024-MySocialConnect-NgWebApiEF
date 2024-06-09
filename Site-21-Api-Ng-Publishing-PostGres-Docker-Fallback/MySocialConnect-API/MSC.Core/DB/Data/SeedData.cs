@@ -77,6 +77,7 @@ public class SeedData
         //var x = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
         //C:\\...\\MySocialConnect-API\\MSC.WebApi\\bin\\Debug\\net8.0
         var location = System.AppDomain.CurrentDomain.BaseDirectory;
+        //var location = Directory.GetCurrentDirectory();
         //C:\\...\\MySocialConnect-API\\MSC.WebApi\\bin\\Debug\\net8.0\\
 
         var filePath = @"DB\Data\UserSeedData.json";

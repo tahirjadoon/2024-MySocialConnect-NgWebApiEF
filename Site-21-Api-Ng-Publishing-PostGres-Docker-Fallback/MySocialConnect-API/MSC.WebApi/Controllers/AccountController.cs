@@ -1,10 +1,9 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using MSC.Core.BusinessLogic;
-using MSC.Core.DB.Entities;
 using MSC.Core.Dtos;
 
-namespace MSC.WebApi.Controller;
+namespace MSC.WebApi.Controllers;
 
 // /api/account
 public class AccountController : BaseApiController

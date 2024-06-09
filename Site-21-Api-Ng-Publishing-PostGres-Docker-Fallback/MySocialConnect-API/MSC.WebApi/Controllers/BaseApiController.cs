@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MSC.Core.ActionFilters;
 
-namespace MSC.WebApi.Controller;
+namespace MSC.WebApi.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]

@@ -7,6 +7,7 @@ import { HelperService } from '../helper.service';
 import { LoggedInUserDto } from '../../models-interfaces/logged-in-user-dto.model';
 import { MessageDto } from '../../models-interfaces/message-dto.model';
 import { SignalRGroup } from '../../models-interfaces/signalr/signalr-group.model';
+import { SpinnerBusyService } from '../spinner-busy.service';
 
 
 @Injectable({
@@ -27,13 +28,16 @@ export class MessageHubService {
   private messageThreadSource = new BehaviorSubject<MessageDto[]>([]);
   messageThread$ = this.messageThreadSource.asObservable();
 
-  constructor(private helperService: HelperService) { }
+  constructor(private helperService: HelperService, private busyService: SpinnerBusyService) { }
 
   //create Hub Connection
   createHubConnection(user: LoggedInUserDto, otherUserName: string, otherUserId: number){
     const otherParams = `?otherUserName=${otherUserName}&otherUserId=${otherUserId}`;
     const url = `${this.helperService.urlSignalrMessage}${otherParams}`;
     this.helperService.logIfFrom(url, "MessageHubService Conn url");
+
+    //show spinner
+    this.busyService.busy();
 
     this.hubConnecton = new HubConnectionBuilder()
                             .withUrl(url, {
@@ -43,10 +47,13 @@ export class MessageHubService {
                             .build();
 
     //start the connection
+    //hide the spinner on finally
     this.hubConnecton.start()
                     .catch(e => {
                       this.helperService.logIfFrom(e, "MessageHubService start Error");
-                    });
+                    })
+                    .finally(() => this.busyService.idle())
+                    ;
 
     //listen for event ReceiveMessageThread
     this.hubConnecton.on(this._keyReceiveMessageThread, (messages: MessageDto[]) => {
@@ -93,6 +100,8 @@ export class MessageHubService {
   stopHubConnection(){
     try{
       if(this.hubConnecton){
+        //when the user moves away then remove the messages
+        this.messageThreadSource.next([]);
         this.hubConnecton.stop()
                       .catch(e => {
                         this.helperService.logIfFrom(e, "PresenceHubService stop Error");

@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -10,7 +9,7 @@ using MSC.Core.DB.Entities;
 using MSC.Core.Dtos.Helper;
 using MSC.Core.Extensions;
 
-namespace MSC.WebApi.Controller;
+namespace MSC.WebApi.Controllers;
 
 // /api/sample
 public class SampleController : BaseApiController

@@ -8,7 +8,7 @@ using MSC.Core.Dtos;
 using MSC.Core.Dtos.Pagination;
 using MSC.Core.Extensions;
 
-namespace MSC.WebApi.Controller;
+namespace MSC.WebApi.Controllers;
 
 [Authorize]
 public class LikesController : BaseApiController

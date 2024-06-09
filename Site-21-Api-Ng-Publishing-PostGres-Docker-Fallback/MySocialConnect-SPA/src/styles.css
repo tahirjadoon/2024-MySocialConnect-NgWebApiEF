@@ -22,6 +22,7 @@ footer {
     margin-top: 10px;
     text-align: center;
     background-color: #fff;
+    z-index: 1000;
  }
 
  

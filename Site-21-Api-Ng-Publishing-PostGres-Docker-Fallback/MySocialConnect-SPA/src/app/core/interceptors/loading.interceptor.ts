@@ -5,7 +5,7 @@ import {
   HttpEvent,
   HttpInterceptor
 } from '@angular/common/http';
-import { Observable, delay, finalize } from 'rxjs';
+import { Observable, delay, finalize, identity } from 'rxjs';
 
 import { SpinnerBusyService } from '../services/spinner-busy.service';
 import { HelperService } from '../services/helper.service';
@@ -25,7 +25,9 @@ export class LoadingInterceptor implements HttpInterceptor {
 
     //return next.handle(request);
     return next.handle(request).pipe(
-      delay(this.helperService.LoadingSpinnerDelayMiliSec),
+      //delay(this.helperService.LoadingSpinnerDelayMiliSec),
+      //first item null cannot be used, use "identity" from rxjs
+      (this.helperService.IsProduction ? identity : delay(this.helperService.LoadingSpinnerDelayMiliSec)),
       finalize(() => {
         if(isSpinnerAllowed)
           this.spinnerBusyService.idle();

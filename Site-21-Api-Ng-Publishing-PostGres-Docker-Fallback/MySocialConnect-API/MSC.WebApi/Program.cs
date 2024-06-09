@@ -91,12 +91,24 @@ app.UseAuthentication();
 
 app.UseAuthorization();
 
+/***Custom Section Start***/
+//Need to serve static content after moving NG SPA deployment to wwwroot folder in the MSC.WebApi
+//this will look for index.htm or index.html
+app.UseDefaultFiles(); 
+//by default will look for the wwwroot folder and will serve the content from there
+app.UseStaticFiles();
+/***Custom Section End***/
+
 app.MapControllers();
 
 /***Custom SignalR EndPoint - to put after app.MapControllers() Start***/
 app.MapHub<PresenceHub>("hubs/presence");
 app.MapHub<MessageHub>("hubs/message");
 /***Custom SignalR EndPoint End***/
+
+/***Custom Section FallBackController Start***/
+app.MapFallbackToController("Index", "Fallback");
+/***Custom Section FallBackController End***/
 
 /***Custom Section Seed Data Start***/
 //IR_REFACTOR
