@@ -44,6 +44,7 @@ export class MemberDetailComponent implements OnInit, OnDestroy {
 
   memberSubscription!: Subscription;
   messageThreadSubscription!: Subscription;
+  addLikeSubscription!: Subscription;
 
   //after resolver
   memberDataFromRouteSubscription!: Subscription;
@@ -73,6 +74,7 @@ export class MemberDetailComponent implements OnInit, OnDestroy {
     if(this.messageThreadSubscription) this.messageThreadSubscription.unsubscribe();
     if(this.memberDataFromRouteSubscription) this.memberDataFromRouteSubscription.unsubscribe();
     if(this.queryParamSubscripton) this.queryParamSubscripton.unsubscribe();
+    if(this.addLikeSubscription) this.addLikeSubscription.unsubscribe();
 
     //also stop the message hub connection. This happening below on activated tab as well 
     this.messageHubService.stopHubConnection();
@@ -195,6 +197,20 @@ export class MemberDetailComponent implements OnInit, OnDestroy {
       complete: () => {}
     });
 
+  }
+
+  onAddLike(member: UserDto){
+    this.addLikeSubscription = this.memberService.addLike(member.id).subscribe({
+      next: () => {
+        this.toastr.success(`You have liked ${member.displayName}`);
+      },
+      error: e => {
+        //no need to do something here since interceptor will display
+      },
+      complete: () => {
+        //no need to do something here since interceptor will display
+      }
+    })
   }
 
 }

@@ -123,6 +123,7 @@ try{
     //Asynchronously applies any pending migrations for the context to the database. Will create the database if it does not already exist.
     await context.Database.MigrateAsync();
 
+    /*Moved to SeedData
     try{
         //Remove old MessageHub Connection app start. TRUNCATE doesn't work with SQLITE
         //way #1
@@ -135,6 +136,8 @@ try{
     catch (Exception ex){
         logger.LogError(ex, ex.Message);
     }
+    */
+    await SeedData.ClearSignalRConnections(context);
     
     //await SeedData.SeedUsers(context);
     await SeedData.SeedUsers(userManager, roleManager);

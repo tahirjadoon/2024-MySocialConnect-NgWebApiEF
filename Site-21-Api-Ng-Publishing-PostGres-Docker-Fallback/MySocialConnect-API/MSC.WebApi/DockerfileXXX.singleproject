@@ -1,0 +1,24 @@
+#image to start from and put a reference as build-env
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build-env
+#add the work dir that the container will star in
+#any future commands will happen in this dir
+WORKDIR /app
+
+#copy the csproj and restore as distinct layers
+#copy it to the working dir
+COPY *.csproj ./
+
+#run dotnet restore command
+RUN dotnet restore 
+
+#copy every thing else and build
+COPY . ./
+
+#publish the release version
+RUN dotnet publish -c Release -o out 
+
+#build run time image, sdk is quire large use run time
+FROM mcr.microsoft.com/dotnet/aspnet:8.0
+WORKDIR /app
+COPY --from=build-env /app/out .
+ENTRYPOINT ["dotnet", "MSC.WebApi.dll"]

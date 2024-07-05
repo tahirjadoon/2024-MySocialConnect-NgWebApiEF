@@ -1,0 +1,36 @@
+#Multiproject solution
+#All projects are at the same level
+#Project1: MSC.Core
+#Project2: MSC.WebApi
+#Entry project is MSC.WebApi
+#Docker file created in MSC.WebApi
+#.dockerignore placed at solution level
+
+#image to start from and put a reference as base, sdk is only for the build  since it is quite large
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+
+#add the work dir that the container will start in
+#any future commands will happen in this dir
+WORKDIR /app
+
+#build
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+ARG BUILD_CONFIGURATION=Release
+WORKDIR /src
+
+#copy the csproj and restore as distinct layers
+COPY MSC.Core/*.csproj ./MSC.Core/
+COPY MSC.WebApi/*.csproj ./MSC.WebApi/
+RUN dotnet restore "./MSC.WebApi/./MSC.WebApi.csproj"
+COPY . .
+WORKDIR "/src/MSC.WebApi"
+RUN dotnet build "./MSC.WebApi.csproj" -c $BUILD_CONFIGURATION -o /app/build
+
+FROM build AS publish
+ARG BUILD_CONFIGURATION=Release
+RUN dotnet publish "./MSC.WebApi.csproj" -c $BUILD_CONFIGURATION -o /app/out /p:UseAppHost=false
+
+FROM base AS final
+WORKDIR /app
+COPY --from=publish /app/out .
+ENTRYPOINT ["dotnet", "MSC.WebApi.dll"]

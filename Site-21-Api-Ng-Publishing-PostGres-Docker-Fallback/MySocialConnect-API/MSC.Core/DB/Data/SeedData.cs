@@ -65,6 +65,26 @@ public class SeedData
     }
 
     /// <summary>
+    /// clear SignalR connections
+    /// </summary>
+    /// <param name="context"></param>
+    /// <returns></returns>
+    public static async Task ClearSignalRConnections(DataContext context)
+    {
+        //for sqlite check the program.cs
+
+        /*
+        Alternate to this is truncate below
+        context.SignalRConnections.RemoveRange(context.SignalRConnections);
+        await context.SaveChangesAsync();
+        */
+        
+        var remove = "TRUNCATE TABLE \"SignalRConnections\"";
+        //var remove = @"DELETE FROM \"SignalRConnections\"";
+        await context.Database.ExecuteSqlRawAsync(remove);
+    }
+
+    /// <summary>
     /// New method after Identity implementation
     /// </summary>
     /// <returns></returns>
@@ -120,6 +140,9 @@ public class SeedData
             }
 
             user.UserName = user.UserName.ToLowerInvariant();
+            user.CreatedOn = DateTime.SpecifyKind(user.CreatedOn, DateTimeKind.Utc);
+            user.LastActive = DateTime.SpecifyKind(user.LastActive, DateTimeKind.Utc);
+            
             await userManager.CreateAsync(user, defaultPassword); //will save as well. 
             //add the user to Member Role
             await userManager.AddToRoleAsync(user, SiteIdentityConstants.Role_Member);

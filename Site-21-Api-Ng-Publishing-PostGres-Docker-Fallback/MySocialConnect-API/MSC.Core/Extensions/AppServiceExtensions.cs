@@ -33,7 +33,13 @@ public static class AppServiceExtensions
         //dotnet ef migrations add InitialCreate -o DbFile/Migrations
         //if every thing is in MSC.WebApi then b is not needed. 
         services.AddDbContext<DataContext>(opt => {
+            //using postgreSQL
+            /*
             opt.UseSqlite(config.GetDefaultConnectionString(), 
+                            b => b.MigrationsAssembly("MSC.WebApi")
+                        );
+            */
+            opt.UseNpgsql(config.GetDefaultConnectionString(), 
                             b => b.MigrationsAssembly("MSC.WebApi")
                         );
             
